@@ -44,7 +44,63 @@
       </a>
     </div>
   </section>
+  <!-- ================= 恋爱计时器 ================= -->
+  <section class="love-timer" aria-label="在一起的时间">
+    <p class="lt-label">在一起</p>
+    <div class="lt-grid">
+      <div class="lt-cell"><span class="lt-num" id="lt-days">0</span><span class="lt-unit">天</span></div>
+      <div class="lt-cell"><span class="lt-num" id="lt-hours">0</span><span class="lt-unit">时</span></div>
+      <div class="lt-cell"><span class="lt-num" id="lt-mins">0</span><span class="lt-unit">分</span></div>
+    </div>
+    <p class="lt-since">SINCE 2026.05.21</p>
+  </section>
 
+  <style>
+    .love-timer{
+      max-width:1180px;margin:0 auto;
+      padding:clamp(36px,7vh,72px) clamp(18px,4vw,44px);
+      text-align:center;
+      border-top:1px solid rgba(255,255,255,.10);
+      border-bottom:1px solid rgba(255,255,255,.10);
+    }
+    .lt-label{
+      font-family:ui-monospace,Menlo,monospace;font-size:10.5px;letter-spacing:.28em;
+      text-transform:uppercase;color:#8e8a82;margin:0 0 22px;
+    }
+    .lt-grid{display:flex;align-items:flex-end;justify-content:center;gap:clamp(24px,7vw,80px)}
+    .lt-cell{display:flex;flex-direction:column;align-items:center;gap:6px}
+    .lt-num{
+      font-family:"Songti SC","Noto Serif SC",Georgia,serif;
+      font-size:clamp(2.6rem,8vw,4.8rem);line-height:1;color:#f3f1ec;
+      font-variant-numeric:tabular-nums;
+    }
+    .lt-unit{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;letter-spacing:.2em;color:#8e8a82}
+    .lt-since{
+      margin:26px 0 0;font-family:ui-monospace,Menlo,monospace;
+      font-size:10px;letter-spacing:.22em;color:#5f5b54;
+    }
+    @media (max-width:520px){ .lt-grid{gap:18px} }
+  </style>
+
+  <script>
+  (function () {
+    var START = new Date("2026-05-21T00:00:00");
+    var d = document.getElementById("lt-days");
+    var h = document.getElementById("lt-hours");
+    var m = document.getElementById("lt-mins");
+    function pad(n) { return n < 10 ? "0" + n : String(n); }
+    function tick() {
+      var t = Date.now() - START.getTime();
+      if (t < 0) t = 0;
+      var sec = Math.floor(t / 1000);
+      d.textContent = Math.floor(sec / 86400);
+      h.textContent = pad(Math.floor(sec % 86400 / 3600));
+      m.textContent = pad(Math.floor(sec % 3600 / 60));
+    }
+    tick();
+    setInterval(tick, 10000);
+  })();
+  </script>
   <!-- ================= STORY / CATEGORIES ================= -->
   <section class="section" id="story">
     <header class="section-head reveal">
