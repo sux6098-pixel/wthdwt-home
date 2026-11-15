@@ -16,6 +16,7 @@ window.PHOTOS = [
   { src: "/images/05.jpg", alt: "黑白合影，嘴里还叼着糖", cat: "daily", width: 949, height: 1259 },
   { src: "/images/06.jpg", alt: "抬头看天，风很大", cat: "daily", width: 1706, height: 1279 },
   { src: "/images/p-20261115-120319-1.jpg", alt: "马甲第一次出门亮相", cat: "trip", width: 1200, height: 1600 },
+  { src: "/images/p-20261115-132614-1.jpg", alt: "乐子照片", cat: "daily", width: 960, height: 1280 },
 ];
 
 /* 封面大图 */
