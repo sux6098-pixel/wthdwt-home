@@ -18,6 +18,9 @@ window.PHOTOS = [
   { src: "/images/p-20261115-120319-1.jpg", alt: "马甲第一次出门亮相", cat: "trip", width: 1200, height: 1600 },
   { src: "/images/p-20261115-132614-1.jpg", alt: "乐子照片", cat: "daily", width: 960, height: 1280 },
   { src: "/images/p-20261115-150538-1.jpg", alt: "回归坐地铁", cat: "daily", width: 1600, height: 1200 },
+  { src: "/images/p-20261115-232549-1.jpg", alt: "聪明蛋来也", cat: "daily", width: 720, height: 1280 },
+  { src: "/images/p-20261115-232549-2.jpg", alt: "", cat: "daily", width: 1200, height: 1600 },
+  { src: "/images/p-20261115-232549-3.jpg", alt: "", cat: "daily", width: 1200, height: 1600 },
 ];
 
 /* 封面大图 */
