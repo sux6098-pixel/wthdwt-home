@@ -1,0 +1,15 @@
+{
+  "name": "wth & dwt 上传",
+  "short_name": "上传",
+  "description": "把照片提交到 wth & dwt 照片站",
+  "start_url": "/admin/",
+  "scope": "/admin/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#080808",
+  "theme_color": "#080808",
+  "icons": [
+    { "src": "/admin/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/admin/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

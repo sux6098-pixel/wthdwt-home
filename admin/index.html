@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>上传 · wth &amp; dwt</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#080808">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="上传">
+<link rel="manifest" href="/admin/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/admin/icon-180.png">
+<link rel="icon" href="/admin/icon-192.png">
+<link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body>
+
+<header class="bar">
+  <span class="brand">wth <em>&amp;</em> dwt</span>
+  <button class="ghost" id="btn-settings" type="button" aria-label="设置">设置</button>
+</header>
+
+<main>
+
+  <!-- ============ 首次设置 ============ -->
+  <section id="view-setup" hidden>
+    <h1>第一次使用</h1>
+    <p class="lead">这个页面把照片直接提交到 GitHub 仓库，Cloudflare 收到后约 1 分钟自动上线。</p>
+
+    <div class="card">
+      <h2>1. 生成一个令牌</h2>
+      <ol class="steps">
+        <li>打开 <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub 细粒度令牌页面</a></li>
+        <li>Token name 随便填，Expiration 选 <b>90 days</b></li>
+        <li>Repository access 选 <b>Only select repositories</b> → 勾 <code>sux6098-pixel/wthdwt-home</code></li>
+        <li>Permissions → Repository permissions → 找到 <b>Contents</b>，改成 <b>Read and write</b></li>
+        <li>点 Generate token，复制那串 <code>github_pat_...</code></li>
+      </ol>
+      <p class="tip">令牌只存在这台手机的浏览器里，不会上传到任何服务器，我也看不到。丢了就在 GitHub 删掉重新生成。两人各自生成一个也可以，共用一个也行。</p>
+    </div>
+
+    <div class="card">
+      <h2>2. 粘贴令牌</h2>
+      <input id="input-token" type="password" inputmode="text" autocomplete="off" spellcheck="false" placeholder="github_pat_...">
+      <button id="btn-connect" class="primary" type="button">连接</button>
+      <p class="status" id="setup-status" role="status"></p>
+    </div>
+  </section>
+
+  <!-- ============ 上传 ============ -->
+  <section id="view-upload" hidden>
+    <div class="who"><span id="who-name"></span><button class="ghost small" id="btn-logout" type="button">退出</button></div>
+
+    <label class="picker" for="file-input">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M12 16V4m0 0L7 9m5-5l5 5M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+      <span>选照片</span>
+      <small>可多选，自动压缩到 1600px</small>
+    </label>
+    <input id="file-input" type="file" accept="image/*" multiple hidden>
+
+    <div id="queue" class="queue"></div>
+
+    <div id="submit-bar" class="submit-bar" hidden>
+      <button id="btn-submit" class="primary" type="button">上传 <span id="count">0</span> 张</button>
+    </div>
+    <p class="status" id="upload-status" role="status"></p>
+    <div id="result" class="result" hidden></div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <a href="/">← 回到网站</a>
+</footer>
+
+<script src="/admin/app.js" defer></script>
+</body>
+</html>
