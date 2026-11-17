@@ -29,6 +29,8 @@
 
 ## 手机上传（不需要电脑）
 
+正式站默认写入 `main`。预览分支测试时，在后台地址末尾添加 `?branch=preview-v2`，例如 `/admin/?branch=preview-v2`；确认正式发布后，普通后台地址仍默认写入 `main`。
+
 手机浏览器打开 `https://wthdwt-home.pages.dev/admin/`：
 
 1. 第一次要粘贴一个 GitHub 令牌（生成方法见页面里的说明，90 天过期，只授本仓库 Contents 读写）
@@ -72,7 +74,7 @@ window.PHOTOS = [
 | 留言 | `#notes` 里 `.note` 的 `<p>` 和 `<cite>` |
 | 主题色 | `assets/styles.css` 顶部 `--accent`（现在 #e8dfd2 米白） |
 
-改完提交到 `main`，Cloudflare Pages 自动部署，约 1 分钟。
+改完提交到对应分支，Cloudflare Pages 会自动生成该分支的预览部署；确认无误后再合并到 `main`。
 
 ## 本地预览
 
