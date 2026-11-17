@@ -140,12 +140,14 @@
     el.upload.hidden = true;
     el.tokenInput.value = "";
     setStatus(el.setupStatus, "");
+    syncShell(false);
   }
 
   function showUpload(name) {
     el.setup.hidden = true;
     el.upload.hidden = false;
     if (name) el.whoName.textContent = "已连接 · " + name;
+    syncShell(true);
   }
 
   function connect() {
@@ -415,6 +417,174 @@
 
   el.fileInput.addEventListener("change", function () { addFiles(el.fileInput.files); });
   el.btnSubmit.addEventListener("click", submit);
+
+  /* ================= 文字编辑（assets/content.json） ================= */
+  function $(id) { return document.getElementById(id); }
+
+  function syncShell(connected) {
+    var tabs = $("tabs");
+    if (tabs) tabs.hidden = !connected;
+    if (!connected) {
+      if ($("view-text")) $("view-text").hidden = true;
+      if ($("view-upload")) $("view-upload").hidden = true;
+    }
+  }
+
+  function switchTab(which) {
+    var isPhoto = which === "photo";
+    $("view-upload").hidden = !isPhoto;
+    $("view-text").hidden = isPhoto;
+    $("tab-photo").setAttribute("aria-pressed", isPhoto ? "true" : "false");
+    $("tab-text").setAttribute("aria-pressed", isPhoto ? "false" : "true");
+    if (!isPhoto) loadText(); else setStatus($("text-status"), "");
+  }
+
+  var contentState = { data: null, sha: null };
+
+  function field(labelText, value, onchange, isArea) {
+    var wrap = document.createElement("div");
+    wrap.className = "field";
+    var lab = document.createElement("label");
+    lab.textContent = labelText;
+    var input = isArea ? document.createElement("textarea") : document.createElement("input");
+    if (!isArea) input.type = "text";
+    input.value = value == null ? "" : value;
+    input.addEventListener("input", function () { onchange(input.value); });
+    wrap.appendChild(lab);
+    wrap.appendChild(input);
+    return wrap;
+  }
+
+  function section(title) {
+    var s = document.createElement("div");
+    s.className = "sec";
+    var h = document.createElement("p");
+    h.className = "sec-title";
+    h.textContent = title;
+    s.appendChild(h);
+    return s;
+  }
+
+  function renderTextForm(d) {
+    var form = $("text-form");
+    form.innerHTML = "";
+
+    /* 封面 */
+    var s1 = section("封面");
+    s1.appendChild(field("英文那句话", d.hero && d.hero.en, function (v) { d.hero.en = v; }, false));
+    s1.appendChild(field("中文那一行", d.hero && d.hero.cn, function (v) { d.hero.cn = v; }, false));
+    form.appendChild(s1);
+
+    /* 时间线 */
+    var s2 = section("时间线");
+    (d.timeline || []).forEach(function (item, i) {
+      var block = document.createElement("div");
+      block.className = "tl-block";
+      var head = document.createElement("div");
+      head.className = "tl-head";
+      head.textContent = "第 " + (i + 1) + " 条";
+      var del = document.createElement("button");
+      del.type = "button";
+      del.className = "tl-del";
+      del.textContent = "删除";
+      del.addEventListener("click", function () {
+        d.timeline.splice(i, 1);
+        renderTextForm(d);
+      });
+      head.appendChild(del);
+      block.appendChild(head);
+      block.appendChild(field("小字（日期/阶段）", item.when, function (v) { item.when = v; }));
+      block.appendChild(field("标题", item.title, function (v) { item.title = v; }));
+      block.appendChild(field("内容", item.text, function (v) { item.text = v; }, true));
+      s2.appendChild(block);
+    });
+    var add = document.createElement("button");
+    add.type = "button";
+    add.className = "add";
+    add.textContent = "+ 添加一条";
+    add.addEventListener("click", function () {
+      d.timeline = d.timeline || [];
+      d.timeline.push({ when: "", title: "", text: "" });
+      renderTextForm(d);
+    });
+    s2.appendChild(add);
+    form.appendChild(s2);
+
+    /* 留言 */
+    var s3 = section("写给彼此");
+    s3.appendChild(field("那句话", d.note && d.note.text, function (v) { d.note.text = v; }, true));
+    s3.appendChild(field("署名", d.note && d.note.by, function (v) { d.note.by = v; }));
+    form.appendChild(s3);
+
+    /* 结尾 */
+    var s4 = section("结尾");
+    s4.appendChild(field("最后一句", d.end && d.end.line, function (v) { d.end.line = v; }));
+    s4.appendChild(field("署名", d.end && d.end.sign, function (v) { d.end.sign = v; }));
+    form.appendChild(s4);
+
+    /* 关于我们 */
+    var s5 = section("关于我们");
+    (d.about || []).forEach(function (p) {
+      var block = document.createElement("div");
+      block.className = "tl-block";
+      var head = document.createElement("div");
+      head.className = "tl-head";
+      head.textContent = p.name || "成员";
+      block.appendChild(head);
+      block.appendChild(field("名字", p.name, function (v) { p.name = v; }));
+      block.appendChild(field("生日（YYYY-MM-DD）", p.born, function (v) { p.born = v; }));
+      block.appendChild(field("星座", p.zodiac, function (v) { p.zodiac = v; }));
+      block.appendChild(field("身高", p.height, function (v) { p.height = v; }));
+      block.appendChild(field("体重", p.weight, function (v) { p.weight = v; }));
+      s5.appendChild(block);
+    });
+    form.appendChild(s5);
+
+    $("text-bar").hidden = false;
+    $("btn-save-text").disabled = false;
+  }
+
+  function loadText() {
+    if (!token) return;
+    setStatus($("text-status"), "读取中…");
+    api("/repos/" + OWNER + "/" + REPO + "/contents/assets/content.json?ref=" + BRANCH)
+      .then(function (meta) {
+        contentState.sha = meta.sha;
+        contentState.data = JSON.parse(b64ToUtf8(meta.content));
+        renderTextForm(contentState.data);
+        setStatus($("text-status"), "");
+      })
+      .catch(function (err) {
+        setStatus($("text-status"), "读取失败：" + err.message, "err");
+      });
+  }
+
+  function saveText() {
+    if (!contentState.data) return;
+    var btn = $("btn-save-text");
+    btn.disabled = true;
+    setStatus($("text-status"), "保存中…");
+    var json = JSON.stringify(contentState.data, null, 2) + "\n";
+    api("/repos/" + OWNER + "/" + REPO + "/contents/assets/content.json", {
+      method: "PUT",
+      body: JSON.stringify({
+        message: "content: 更新文字",
+        content: utf8ToB64(json),
+        sha: contentState.sha,
+        branch: BRANCH
+      })
+    }).then(function (res) {
+      contentState.sha = res.content.sha;
+      setStatus($("text-status"), "已保存，约 1 分钟后生效", "ok");
+    }).catch(function (err) {
+      setStatus($("text-status"), "保存失败：" + err.message, "err");
+    }).then(function () { btn.disabled = false; });
+  }
+
+  if ($("tab-photo")) $("tab-photo").addEventListener("click", function () { switchTab("photo"); });
+  if ($("tab-text")) $("tab-text").addEventListener("click", function () { switchTab("text"); });
+  if ($("btn-reload")) $("btn-reload").addEventListener("click", loadText);
+  if ($("btn-save-text")) $("btn-save-text").addEventListener("click", saveText);
 
   /* 启动：有令牌验证一下，没有就进设置 */
   if (token) {
