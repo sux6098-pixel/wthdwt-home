@@ -495,6 +495,7 @@
       out.push({
         src: src,
         alt: pick("alt"),
+        note: pick("note"),
         cat: pick("cat") || "daily",
         city: pick("city"),
         width: w ? +w[1] : 0,
@@ -553,6 +554,12 @@
       alt.value = p.alt || "";
       alt.addEventListener("input", function () { p.alt = alt.value; });
 
+      var note = document.createElement("input");
+      note.type = "text";
+      note.placeholder = "碎碎念 —— 这张照片背后的那句话";
+      note.value = p.note || "";
+      note.addEventListener("input", function () { p.note = note.value; });
+
       var row = document.createElement("div");
       row.className = "org-row";
 
@@ -591,6 +598,7 @@
       row.appendChild(del);
 
       fields.appendChild(alt);
+      fields.appendChild(note);
       fields.appendChild(row);
       item.appendChild(fields);
       box.appendChild(item);
@@ -618,8 +626,9 @@
     setStatus($("org-status"), "保存中…");
 
     var lines = orgState.photos.map(function (p) {
-      var line = '  { src: "' + p.src + '", alt: ' + JSON.stringify(p.alt || "") +
-        ', cat: "' + (p.cat || "daily") + '"';
+      var line = '  { src: "' + p.src + '", alt: ' + JSON.stringify(p.alt || "");
+      if (p.note) line += ", note: " + JSON.stringify(p.note);
+      line += ', cat: "' + (p.cat || "daily") + '"';
       if (p.city) line += ', city: "' + p.city + '"';
       if (p.width) line += ", width: " + p.width + ", height: " + p.height;
       return line + " },";

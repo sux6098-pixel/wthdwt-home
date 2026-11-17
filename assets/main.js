@@ -138,13 +138,24 @@
   var current = 0;
   var lastFocused = null;
 
+  function escapeHtml(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
   function show(index) {
     if (!view.length || !lbImg) return;
     current = (index + view.length) % view.length;
     var photo = view[current];
     lbImg.src = photo.src;
     lbImg.alt = photo.alt || "";
-    if (lbCap) lbCap.textContent = photo.alt || "";
+    if (lbCap) {
+      var html = "";
+      if (photo.alt) html += '<span class="lb-cap">' + escapeHtml(photo.alt) + "</span>";
+      if (photo.note) html += '<span class="lb-note">' + escapeHtml(photo.note) + "</span>";
+      lbCap.innerHTML = html;
+    }
     if (lbCount) lbCount.textContent = (current + 1) + " / " + view.length;
   }
 
@@ -176,6 +187,19 @@
       else if (e.key === "ArrowRight") show(current + 1);
     });
   }
+
+  /* 供旅行图层调用：打开单张照片 */
+  window.WTHLightbox = {
+    open: function (photo) {
+      if (!lb || !photo) return;
+      view = [photo];
+      lastFocused = document.activeElement;
+      show(0);
+      lb.hidden = false;
+      document.body.style.overflow = "hidden";
+      if (btnClose) btnClose.focus();
+    }
+  };
 
   /* ---------------- category cards -> filter ---------------- */
   document.querySelectorAll(".card[data-filter]").forEach(function (card) {

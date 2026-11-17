@@ -155,7 +155,7 @@
             p.classList.remove("is-active");
           });
           g.classList.add("is-active");
-          showDetail(t);
+          openLayer(t);
         }
         g.addEventListener("click", activate);
         g.addEventListener("keydown", function (e) {
@@ -166,44 +166,97 @@
       });
       svg.appendChild(gPins);
       host.appendChild(svg);
-
-      var first = trips.filter(function (t) { return t.status !== "planning"; })[0] || trips[0];
-      if (first) showDetail(first);
     }).catch(function () {
       host.innerHTML = '<p class="map-fail">地图加载失败</p>';
     });
   }
 
-  /* ---------------- 城市详情 ---------------- */
-  function showDetail(t) {
-    var box = document.getElementById("city-detail");
-    if (!box) return;
+  /* ---------------- 城市图层 ---------------- */
+  var layer = null, layerInner = null;
+
+  function ensureLayer() {
+    layer = document.getElementById("city-layer");
+    layerInner = document.getElementById("cl-inner");
+    var close = document.getElementById("cl-close");
+    if (close && !close.__bound) {
+      close.__bound = true;
+      close.addEventListener("click", closeLayer);
+    }
+    if (layer && !layer.__bound) {
+      layer.__bound = true;
+      layer.addEventListener("click", function (e) {
+        if (e.target === layer) closeLayer();
+      });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && layer && !layer.hidden) closeLayer();
+      });
+    }
+  }
+
+  function openLayer(t) {
+    ensureLayer();
+    if (!layer || !layerInner) return;
+
     var planned = t.status === "planning";
     var statusText = planned ? "计划中" : (t.status === "done" ? "已去过" : "");
     var date = t.date ? String(t.date).replace(/-/g, ".") : "";
 
-    /* 这个城市的照片：手动挂的 + 相册里 city 字段匹配的 */
     var linked = (window.PHOTOS || []).filter(function (p) {
       return p && p.city && p.city === t.city;
     }).map(function (p) {
-      return { src: p.src, alt: p.alt || "" };
+      return { src: p.src, alt: p.alt || "", note: p.note || "" };
     });
     var merged = (t.photos || []).concat(linked);
 
-    var photos = merged.map(function (p) {
-      return '<figure class="city-ph"><img src="' + p.src + '" alt="' + esc(p.alt || "") + '" loading="lazy"></figure>';
+    var grid = merged.map(function (p, i) {
+      return '<figure class="cl-ph" data-i="' + i + '">' +
+        '<img src="' + p.src + '" alt="' + esc(p.alt || "") + '" loading="lazy">' +
+        ((p.alt || p.note)
+          ? "<figcaption>" +
+              (p.alt ? '<span class="cl-cap">' + esc(p.alt) + "</span>" : "") +
+              (p.note ? '<span class="cl-note">' + esc(p.note) + "</span>" : "") +
+            "</figcaption>"
+          : "") +
+        "</figure>";
     }).join("");
 
-    var empty = '<p class="city-empty">这个地方的照片还没整理。</p>';
+    layerInner.innerHTML =
+      '<header class="cl-head">' +
+        '<p class="cl-label">' + (planned ? "计划中 · 还没去" : "旅行记忆") + "</p>" +
+        '<h2 id="cl-title">' + esc(t.city) + "</h2>" +
+        '<p class="cl-meta">' +
+          '<span class="city-badge' + (planned ? " is-planned" : "") + '">' + esc(statusText) + "</span>" +
+          (date ? "<span>" + esc(date) + "</span>" : "") +
+          (merged.length ? "<span>" + merged.length + " 张照片</span>" : "") +
+        "</p>" +
+      "</header>" +
+      (t.story ? '<p class="cl-story">' + esc(t.story) + "</p>" : "") +
+      (grid ? '<div class="cl-grid">' + grid + "</div>"
+            : '<p class="cl-empty">这个地方的照片还没整理。</p>');
 
-    box.innerHTML =
-      '<div class="city-head">' +
-        '<h3>' + esc(t.city) + '</h3>' +
-        '<span class="city-badge' + (planned ? " is-planned" : "") + '">' + esc(statusText) + '</span>' +
-      '</div>' +
-      (date ? '<p class="city-meta">' + esc(date) + '</p>' : "") +
-      (t.story ? '<p class="city-story">' + esc(t.story) + '</p>' : "") +
-      (photos ? '<div class="city-photos">' + photos + '</div>' : empty);
+    /* 点照片 → 大图 + 碎碎念 */
+    Array.prototype.forEach.call(layerInner.querySelectorAll(".cl-ph"), function (fig) {
+      fig.addEventListener("click", function () {
+        var i = +fig.getAttribute("data-i");
+        var p = merged[i];
+        if (p && window.WTHLightbox) {
+          window.WTHLightbox.open({ src: p.src, alt: p.alt, note: p.note });
+        }
+      });
+    });
+
+    layer.hidden = false;
+    document.body.style.overflow = "hidden";
+    requestAnimationFrame(function () { layer.classList.add("is-open"); });
+  }
+
+  function closeLayer() {
+    if (!layer) return;
+    layer.classList.remove("is-open");
+    document.body.style.overflow = "";
+    setTimeout(function () {
+      if (layer && !layer.classList.contains("is-open")) layer.hidden = true;
+    }, 340);
   }
 
   window.TravelMap = { render: render };
