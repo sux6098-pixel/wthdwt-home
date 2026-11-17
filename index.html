@@ -12,6 +12,7 @@
 <meta property="og:type" content="website">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/assets/styles.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 </head>
 <body>
 <a class="skip-link" href="#main">跳到主要内容</a>
@@ -20,8 +21,8 @@
   <a class="mark" href="#top">wth <em>&amp;</em> dwt</a>
   <nav aria-label="站点导航">
     <a href="#story">故事</a>
+    <a href="#journey">地图</a>
     <a href="#gallery">相册</a>
-    <a href="#timeline">时间线</a>
     <a href="#plans">计划</a>
     <a href="#notes">留言</a>
   </nav>
@@ -297,8 +298,8 @@
         <div class="card-media"><img src="/images/01.jpg" alt="车窗边的自拍" loading="lazy" decoding="async"></div>
         <div class="card-body">
           <span class="card-index">03</span>
-          <h3>照片时间线</h3>
-          <p>按照日期收藏回忆</p>
+          <h3>我们的起点</h3>
+          <p>从军训时的相识，到电影中的牵手</p>
           <span class="card-go" aria-hidden="true">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17L17 7M9 7h8v8"/></svg>
           </span>
@@ -320,10 +321,44 @@
     </div>
   </section>
 
+  <!-- ================= JOURNEY MAP ================= -->
+  <section class="section journey-section" id="journey">
+    <header class="section-head reveal">
+      <span class="label">02 — OUR JOURNEY</span>
+      <h2>一起走过的地方</h2>
+      <p class="section-note">地图记录已经抵达的城市，也替下一次出发留一个位置。</p>
+    </header>
+    <div class="journey-layout reveal">
+      <div class="map-shell">
+        <div id="journey-map" role="application" aria-label="中国旅行地图"></div>
+        <div class="map-legend">
+          <span><i class="legend-dot visited"></i> 已到访</span>
+          <span><i class="legend-dot planned"></i> 计划中</span>
+        </div>
+        <p class="map-credit">地图数据 © OpenStreetMap contributors</p>
+      </div>
+      <aside class="place-panel" aria-label="旅行地点">
+        <p class="panel-kicker">OUR FOOTPRINTS</p>
+        <button class="place-card is-active" type="button" data-place="fuzhou">
+          <span class="place-status">VISITED · 已到访</span><strong>福州</strong><small>福建 · 中国</small><span class="place-arrow">↗</span>
+        </button>
+        <button class="place-card" type="button" data-place="changsha">
+          <span class="place-status">VISITED · 已到访</span><strong>长沙</strong><small>湖南 · 中国</small><span class="place-arrow">↗</span>
+        </button>
+        <button class="place-card planned-card" type="button" data-place="lushan">
+          <span class="place-status">UP NEXT · 计划中</span><strong>庐山</strong><small>江西 · 元旦计划</small><span class="place-arrow">↗</span>
+        </button>
+        <div class="place-detail" id="place-detail" aria-live="polite">
+          <span class="detail-label">A PLACE TO REMEMBER</span><h3>福州</h3><p>这座城市，已经成为你们共同走过的足迹。</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
   <!-- ================= GALLERY ================= -->
   <section class="section" id="gallery">
     <header class="section-head reveal">
-      <span class="label">02 — 相册 · Gallery</span>
+      <span class="label">03 — 相册 · Gallery</span>
       <h2>照片</h2>
       <p class="section-note">点任意一张放大，方向键切换，Esc 关闭。</p>
     </header>
@@ -338,7 +373,7 @@
   <!-- ================= TIMELINE ================= -->
   <section class="section" id="timeline">
     <header class="section-head reveal">
-      <span class="label">03 — 时间线 · Timeline</span>
+      <span class="label">04 — THE BEGINNING</span>
       <h2>我们怎么走到这里</h2>
     </header>
 
@@ -369,7 +404,7 @@
   <!-- ================= PLANS ================= -->
   <section class="section plans" id="plans">
     <header class="section-head reveal">
-      <span class="label">04 — 计划 · Plans</span>
+      <span class="label">05 — 计划 · Plans</span>
       <h2>下一站，庐山</h2>
       <p class="section-note">还没发生的事，先认真期待。</p>
     </header>
@@ -385,7 +420,7 @@
   <!-- ================= NOTES ================= -->
   <section class="section notes" id="notes">
     <header class="section-head reveal">
-      <span class="label">05 — 留言 · Notes</span>
+      <span class="label">06 — 留言 · Notes</span>
       <h2>写给彼此</h2>
     </header>
     <blockquote class="note reveal">
@@ -423,6 +458,8 @@
   <p class="lb-count" id="lb-count"></p>
 </div>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
+<script src="/assets/map.js" defer></script>
 <script src="/assets/photos.js" defer></script>
 <script src="/assets/content.js" defer></script>
 <script src="/assets/main.js" defer></script>

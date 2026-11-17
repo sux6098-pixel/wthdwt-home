@@ -631,3 +631,27 @@ p:last-child { margin-bottom: 0; }
   font-size: clamp(1.7rem, 5vw, 2.4rem); font-weight: 400;
 }
 .plan-card p { max-width: 52ch; color: var(--ink-soft); margin: 0; }
+
+
+/* V3 — interactive journey map */
+.journey-section{padding-top:clamp(52px,9vh,100px)}
+.journey-layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(250px,.8fr);gap:18px;align-items:stretch}
+.map-shell{position:relative;min-height:520px;overflow:hidden;border:1px solid var(--line);border-radius:22px;background:#101311}
+#journey-map{width:100%;height:520px;min-height:520px;background:#111713;z-index:1}
+#journey-map .leaflet-tile{filter:grayscale(1) invert(.88) contrast(.82) brightness(.78)}
+#journey-map .leaflet-control-zoom a{background:#171917;color:#eee9df;border-color:rgba(255,255,255,.16)}
+#journey-map .leaflet-control-attribution{background:rgba(7,7,7,.7);color:#aaa;font-size:9px}
+#journey-map .leaflet-control-attribution a{color:#c8bba7}
+.map-legend{position:absolute;left:16px;top:16px;z-index:500;display:flex;gap:14px;padding:10px 12px;border:1px solid rgba(255,255,255,.12);border-radius:999px;background:rgba(8,9,8,.88);backdrop-filter:blur(12px);color:#d5d0c7;font:10px var(--mono);letter-spacing:.08em}
+.legend-dot{display:inline-block;width:7px;height:7px;margin-right:6px;border-radius:50%;vertical-align:1px;background:#d8c8a9;box-shadow:0 0 10px currentColor}.legend-dot.planned{background:#a6b7aa}
+.map-credit{position:absolute;bottom:7px;left:12px;z-index:500;margin:0;color:#777;font:9px var(--mono)}
+.map-pin-wrap{background:none;border:0}.map-pin{display:block;width:19px;height:19px;border:1px solid #eee6d8;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#c7b89c;box-shadow:0 0 0 5px rgba(199,184,156,.14),0 0 22px rgba(199,184,156,.55)}.map-pin i{display:block;width:5px;height:5px;margin:6px;border-radius:50%;background:#171714}.map-pin.planned{background:#829b89;border-color:#d5e0d6;box-shadow:0 0 0 5px rgba(130,155,137,.14),0 0 22px rgba(130,155,137,.55)}
+.map-popup{display:grid;gap:3px;min-width:90px;font-family:var(--sans)}.map-popup small{color:#777;font-size:10px}.map-popup strong{color:#222;font:500 18px var(--serif)}.map-popup span{color:#666;font-size:11px}.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#eee9df}
+.place-panel{display:flex;flex-direction:column;gap:10px;padding:18px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(155deg,#151614,#0d0e0d)}
+.panel-kicker,.detail-label{margin:0 0 4px;color:#817d74;font:10px var(--mono);letter-spacing:.2em}
+.place-card{position:relative;display:grid;gap:4px;width:100%;padding:15px 42px 15px 15px;border:1px solid rgba(255,255,255,.09);border-radius:14px;background:rgba(255,255,255,.025);color:var(--ink);text-align:left;cursor:pointer;transition:border-color .2s,background .2s}.place-card:hover,.place-card.is-active{border-color:rgba(232,223,210,.42);background:rgba(232,223,210,.07)}
+.place-status{color:#aaa397;font:9px var(--mono);letter-spacing:.13em}.place-card strong{font:400 23px var(--serif)}.place-card small{color:#88847c;font-size:11px}.place-arrow{position:absolute;right:16px;top:22px;color:#aaa397;font-size:17px}.planned-card .place-status{color:#9eb4a3}
+.place-detail{margin-top:auto;padding:18px 4px 4px;border-top:1px solid var(--line)}.place-detail h3{margin:8px 0 6px;font:400 25px var(--serif)}.place-detail p{margin:0;color:#99958d;font-size:12px;line-height:1.8}
+.map-fallback{display:grid;place-content:center;gap:10px;height:100%;min-height:520px;padding:24px;color:#eee9df;text-align:center}.map-fallback span{color:#999;font-size:12px}
+@media(max-width:800px){.journey-layout{grid-template-columns:1fr}.map-shell,#journey-map{min-height:420px;height:420px}.place-panel{display:grid;grid-template-columns:1fr 1fr}.panel-kicker,.place-detail{grid-column:1/-1}.place-detail{margin-top:8px}}
+@media(max-width:480px){.map-shell,#journey-map{min-height:360px;height:360px}.map-legend{left:10px;top:10px;font-size:9px}.place-panel{padding:12px;gap:8px}.place-card{padding:12px 30px 12px 12px}.place-card strong{font-size:20px}.place-arrow{right:10px;top:17px}}
