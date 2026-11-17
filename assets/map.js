@@ -1,4 +1,4 @@
-﻿/* ============================================================
+/* ============================================================
    旅行地图
    - 真实中国省界（assets/china.json，GeoJSON）
    - 城市按真实经纬度打点，去过的连线，计划中的用虚线
@@ -10,7 +10,7 @@
   var SVG_NS = "http://www.w3.org/2000/svg";
   var W = 1000;
 
-  /* 墨卡托投影，纬度方向拉伸更接近真实观感 */
+  /* 墨卡托投影 */
   function project(lon, lat) {
     var x = lon * Math.PI / 180;
     var r = lat * Math.PI / 180;
@@ -18,7 +18,7 @@
     return [x, -y];
   }
 
-  function pathFromGeometry(geom, projectFn, scale, offset) {
+  function pathFromGeometry(geom, scale, offset) {
     var rings = [];
     if (geom.type === "Polygon") rings = [geom.coordinates];
     else if (geom.type === "MultiPolygon") rings = geom.coordinates;
@@ -29,7 +29,7 @@
       poly.forEach(function (ring) {
         var started = false;
         for (var i = 0; i < ring.length; i++) {
-          var p = projectFn(ring[i][0], ring[i][1]);
+          var p = project(ring[i][0], ring[i][1]);
           var x = (p[0] - offset[0]) * scale;
           var y = (p[1] - offset[1]) * scale;
           d += (started ? "L" : "M") + x.toFixed(1) + " " + y.toFixed(1);
@@ -47,6 +47,12 @@
     return n;
   }
 
+  function esc(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
   var cache = null;
 
   function loadGeo() {
@@ -62,20 +68,22 @@
     trips = trips || [];
 
     loadGeo().then(function (geo) {
-      /* 计算投影范围 */
       var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-      function scan(c) {
-        if (typeof c[0] === "number") {
-          var p = project(c[0], c[1]);
-          if (p[0] < minX) minX = p[0];
-          if (p[0] > maxX) maxX = p[0];
-          if (p[1] < minY) minY = p[1];
-          if (p[1] > maxY) maxY = p[1];
-        } else {
-          for (var i = 0; i < c.length; i++) scan(c[i]);
-        }
-      }
-      geo.features.forEach(function (f) { scan(f.geometry.coordinates); });
+      geo.features.forEach(function (f) {
+        if (!f.geometry) return;
+        var rings = f.geometry.type === "Polygon" ? [f.geometry.coordinates] : f.geometry.coordinates;
+        rings.forEach(function (poly) {
+          poly.forEach(function (ring) {
+            for (var i = 0; i < ring.length; i++) {
+              var p = project(ring[i][0], ring[i][1]);
+              if (p[0] < minX) minX = p[0];
+              if (p[0] > maxX) maxX = p[0];
+              if (p[1] < minY) minY = p[1];
+              if (p[1] > maxY) maxY = p[1];
+            }
+          });
+        });
+      });
 
       var pad = 0.9;
       var scale = W / (maxX - minX + pad * 2);
@@ -93,7 +101,7 @@
       var gProv = el("g", { class: "map-prov" });
       geo.features.forEach(function (f) {
         if (!f.geometry) return;
-        var d = pathFromGeometry(f.geometry, project, scale, offset);
+        var d = pathFromGeometry(f.geometry, scale, offset);
         if (!d) return;
         var p = el("path", { d: d });
         p.setAttribute("data-name", (f.properties && f.properties.name) || "");
@@ -106,9 +114,13 @@
         return [(p[0] - offset[0]) * scale, (p[1] - offset[1]) * scale];
       }
 
-      /* 路线：只连去过的，按日期先后 */
-      var visited = trips.filter(function (t) { return t.status !== "planning" && typeof t.lon === "number"; });
-      visited.sort(function (a, b) { return String(a.date || "").localeCompare(String(b.date || "")); });
+      /* 路线：只连去过的，按日期排序 */
+      var visited = trips.filter(function (t) {
+        return t.status !== "planning" && typeof t.lon === "number" && typeof t.lat === "number";
+      });
+      visited.sort(function (a, b) {
+        return String(a.date || "").localeCompare(String(b.date || ""));
+      });
       if (visited.length > 1) {
         var d = visited.map(function (t, i) {
           var q = pt(t.lon, t.lat);
@@ -117,9 +129,9 @@
         svg.appendChild(el("path", { d: d, class: "map-route" }));
       }
 
-      /* 点位 */
+      /* 城市点位 */
       var gPins = el("g", { class: "map-pins" });
-      trips.forEach(function (t, idx) {
+      trips.forEach(function (t) {
         if (typeof t.lon !== "number" || typeof t.lat !== "number") return;
         var q = pt(t.lon, t.lat);
         var planned = t.status === "planning";
@@ -155,7 +167,6 @@
       svg.appendChild(gPins);
       host.appendChild(svg);
 
-      /* 默认选中第一个去过的城市 */
       var first = trips.filter(function (t) { return t.status !== "planning"; })[0] || trips[0];
       if (first) showDetail(first);
     }).catch(function () {
@@ -171,24 +182,28 @@
     var statusText = planned ? "计划中" : (t.status === "done" ? "已去过" : "");
     var date = t.date ? String(t.date).replace(/-/g, ".") : "";
 
-    var photos = (t.photos || []).map(function (p) {
-      return '<figure class="city-ph"><img src="' + p.src + '" alt="' + (p.alt || "") + '" loading="lazy"></figure>';
+    /* 这个城市的照片：手动挂的 + 相册里 city 字段匹配的 */
+    var linked = (window.PHOTOS || []).filter(function (p) {
+      return p && p.city && p.city === t.city;
+    }).map(function (p) {
+      return { src: p.src, alt: p.alt || "" };
+    });
+    var merged = (t.photos || []).concat(linked);
+
+    var photos = merged.map(function (p) {
+      return '<figure class="city-ph"><img src="' + p.src + '" alt="' + esc(p.alt || "") + '" loading="lazy"></figure>';
     }).join("");
+
+    var empty = '<p class="city-empty">这个地方的照片还没整理。</p>';
 
     box.innerHTML =
       '<div class="city-head">' +
-        '<h3>' + esc(t.city) + "</h3>" +
-        '<span class="city-badge' + (planned ? " is-planned" : "") + '">' + esc(statusText) + "</span>" +
-      "</div>" +
-      (date ? '<p class="city-meta">' + esc(date) + "</p>" : "") +
-      (t.story ? '<p class="city-story">' + esc(t.story) + "</p>" : "") +
-      (photos ? '<div class="city-photos">' + photos + "</div>" : "");
-  }
-
-  function esc(s) {
-    return String(s == null ? "" : s)
-      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
+        '<h3>' + esc(t.city) + '</h3>' +
+        '<span class="city-badge' + (planned ? " is-planned" : "") + '">' + esc(statusText) + '</span>' +
+      '</div>' +
+      (date ? '<p class="city-meta">' + esc(date) + '</p>' : "") +
+      (t.story ? '<p class="city-story">' + esc(t.story) + '</p>' : "") +
+      (photos ? '<div class="city-photos">' + photos + '</div>' : empty);
   }
 
   window.TravelMap = { render: render };

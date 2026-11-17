@@ -20,6 +20,7 @@
   <span class="brand">wth <em>&amp;</em> dwt</span>
   <div class="tabs" id="tabs" hidden>
     <button class="tab" id="tab-photo" type="button" aria-pressed="true">照片</button>
+    <button class="tab" id="tab-organize" type="button" aria-pressed="false">整理</button>
     <button class="tab" id="tab-text" type="button" aria-pressed="false">文字</button>
   </div>
   <button class="ghost" id="btn-settings" type="button" aria-label="设置">设置</button>
@@ -70,6 +71,17 @@
     </div>
     <p class="status" id="upload-status" role="status"></p>
     <div id="result" class="result" hidden></div>
+  </section>
+
+  <!-- ============ 整理照片 ============ -->
+  <section id="view-organize" hidden>
+    <div class="who"><span>整理照片</span><button class="ghost small" id="btn-reload-photos" type="button">重新读取</button></div>
+    <p class="lead">改说明、选分类、指定归属城市 —— 城市决定这张照片出现在地图的哪个地方。</p>
+    <div id="org-list"></div>
+    <div class="submit-bar" id="org-bar" hidden>
+      <button id="btn-save-photos" class="primary" type="button">保存归类</button>
+    </div>
+    <p class="status" id="org-status" role="status"></p>
   </section>
 
   <!-- ============ 文字编辑 ============ -->

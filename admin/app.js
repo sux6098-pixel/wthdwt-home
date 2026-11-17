@@ -18,6 +18,7 @@
   var queue = [];
   var seq = 0;
   var busy = false;
+  var cityList = [];
 
   var el = {
     setup: document.getElementById("view-setup"),
@@ -148,6 +149,7 @@
     el.upload.hidden = false;
     if (name) el.whoName.textContent = "已连接 · " + name;
     syncShell(true);
+    loadCityList();
   }
 
   function connect() {
@@ -196,7 +198,8 @@
             height: out.height,
             preview: URL.createObjectURL(out.blob),
             caption: "",
-            cat: "daily"
+            cat: "daily",
+            city: ""
           };
           queue.push(item);
           renderQueue();
@@ -251,6 +254,18 @@
       meta.className = "meta";
       meta.textContent = item.width + "×" + item.height + " · " + Math.round(item.blob.size / 1024) + "KB";
 
+      var citySel = document.createElement("select");
+      citySel.className = "city-sel";
+      citySel.setAttribute("aria-label", "归属城市");
+      [""].concat(cityList).forEach(function (name) {
+        var opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = name || "不属于某次旅行";
+        if ((item.city || "") === name) opt.selected = true;
+        citySel.appendChild(opt);
+      });
+      citySel.addEventListener("change", function () { item.city = citySel.value; });
+
       var del = document.createElement("button");
       del.type = "button";
       del.className = "del";
@@ -262,6 +277,7 @@
       });
 
       row.appendChild(seg);
+      row.appendChild(citySel);
       row.appendChild(meta);
       row.appendChild(del);
 
@@ -301,7 +317,9 @@
         var text = b64ToUtf8(meta.content);
         var lines = entries.map(function (e) {
           return '  { src: "/images/' + e.name + '", alt: ' + JSON.stringify(e.caption) +
-            ', cat: "' + e.cat + '", width: ' + e.width + ", height: " + e.height + " },";
+            ', cat: "' + e.cat + '"' +
+            (e.city ? ', city: "' + e.city + '"' : "") +
+            ", width: " + e.width + ", height: " + e.height + " },";
         }).join("\n");
 
         var start = text.indexOf("window.PHOTOS");
@@ -349,6 +367,7 @@
             name: name,
             caption: item.caption.trim(),
             cat: item.cat,
+            city: item.city || "",
             width: item.width,
             height: item.height
           });
@@ -426,17 +445,202 @@
     if (tabs) tabs.hidden = !connected;
     if (!connected) {
       if ($("view-text")) $("view-text").hidden = true;
+      if ($("view-organize")) $("view-organize").hidden = true;
       if ($("view-upload")) $("view-upload").hidden = true;
     }
   }
 
+  function loadCityList() {
+    if (!token) return;
+    api("/repos/" + OWNER + "/" + REPO + "/contents/assets/content.json?ref=" + BRANCH)
+      .then(function (meta) {
+        var d = JSON.parse(b64ToUtf8(meta.content));
+        cityList = (d.trips || []).map(function (t) { return t.city; }).filter(Boolean);
+        if (queue.length) renderQueue();
+      })
+      .catch(function () { /* 城市列表拿不到就先留空 */ });
+  }
+
   function switchTab(which) {
     var isPhoto = which === "photo";
-    $("view-upload").hidden = !isPhoto;
-    $("view-text").hidden = isPhoto;
+    var isOrg = which === "organize";
+    var isText = which === "text";
+    if ($("view-upload")) $("view-upload").hidden = !isPhoto;
+    if ($("view-organize")) $("view-organize").hidden = !isOrg;
+    if ($("view-text")) $("view-text").hidden = !isText;
     $("tab-photo").setAttribute("aria-pressed", isPhoto ? "true" : "false");
-    $("tab-text").setAttribute("aria-pressed", isPhoto ? "false" : "true");
-    if (!isPhoto) loadText(); else setStatus($("text-status"), "");
+    if ($("tab-organize")) $("tab-organize").setAttribute("aria-pressed", isOrg ? "true" : "false");
+    $("tab-text").setAttribute("aria-pressed", isText ? "true" : "false");
+    if (isText) loadText();
+    if (isOrg) loadPhotosOrg();
+  }
+
+  /* ================= 整理照片（assets/photos.js） ================= */
+  var orgState = { photos: [], sha: null, header: "", tail: "" };
+
+  function parsePhotoEntries(body) {
+    var out = [];
+    var re = /\{[^}]*\}/g, m;
+    while ((m = re.exec(body))) {
+      var s = m[0];
+      function pick(key) {
+        var r = new RegExp(key + ':\\s*"([^"]*)"');
+        var x = r.exec(s);
+        return x ? x[1] : "";
+      }
+      var src = pick("src");
+      if (!src) continue;
+      var w = /width:\s*(\d+)/.exec(s);
+      var h = /height:\s*(\d+)/.exec(s);
+      out.push({
+        src: src,
+        alt: pick("alt"),
+        cat: pick("cat") || "daily",
+        city: pick("city"),
+        width: w ? +w[1] : 0,
+        height: h ? +h[1] : 0
+      });
+    }
+    return out;
+  }
+
+  function loadPhotosOrg() {
+    if (!token) return;
+    setStatus($("org-status"), "读取中…");
+    api("/repos/" + OWNER + "/" + REPO + "/contents/assets/photos.js?ref=" + BRANCH)
+      .then(function (meta) {
+        var text = b64ToUtf8(meta.content);
+        orgState.sha = meta.sha;
+        var start = text.indexOf("window.PHOTOS");
+        var open = text.indexOf("[", start);
+        var close = text.indexOf("];", open);
+        orgState.header = text.slice(0, open + 1);
+        orgState.tail = text.slice(close);
+        orgState.photos = parsePhotoEntries(text.slice(open + 1, close));
+        renderOrg();
+        setStatus($("org-status"), "");
+      })
+      .catch(function (err) {
+        setStatus($("org-status"), "读取失败：" + err.message, "err");
+      });
+  }
+
+  function renderOrg() {
+    var box = $("org-list");
+    if (!box) return;
+    box.innerHTML = "";
+    if (!orgState.photos.length) {
+      box.innerHTML = '<p class="lead">还没有照片。</p>';
+      $("org-bar").hidden = true;
+      return;
+    }
+    orgState.photos.forEach(function (p, i) {
+      var item = document.createElement("div");
+      item.className = "org-item";
+
+      var img = document.createElement("img");
+      img.src = p.src;
+      img.alt = "";
+      img.loading = "lazy";
+      item.appendChild(img);
+
+      var fields = document.createElement("div");
+      fields.className = "org-fields";
+
+      var alt = document.createElement("input");
+      alt.type = "text";
+      alt.placeholder = "说明（可留空）";
+      alt.value = p.alt || "";
+      alt.addEventListener("input", function () { p.alt = alt.value; });
+
+      var row = document.createElement("div");
+      row.className = "org-row";
+
+      var catSel = document.createElement("select");
+      [["daily", "日常"], ["trip", "旅行"]].forEach(function (o) {
+        var opt = document.createElement("option");
+        opt.value = o[0]; opt.textContent = o[1];
+        if ((p.cat || "daily") === o[0]) opt.selected = true;
+        catSel.appendChild(opt);
+      });
+      catSel.addEventListener("change", function () { p.cat = catSel.value; });
+
+      var citySel = document.createElement("select");
+      [""].concat(cityList).forEach(function (name) {
+        var opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = name || "不属于某次旅行";
+        if ((p.city || "") === name) opt.selected = true;
+        citySel.appendChild(opt);
+      });
+      citySel.addEventListener("change", function () { p.city = citySel.value; });
+
+      var del = document.createElement("button");
+      del.type = "button";
+      del.className = "tl-del";
+      del.textContent = "删除";
+      del.addEventListener("click", function () {
+        if (!confirm("从相册里删除这张照片？")) return;
+        deletePhotoFile(p.src);
+        orgState.photos.splice(i, 1);
+        renderOrg();
+      });
+
+      row.appendChild(catSel);
+      row.appendChild(citySel);
+      row.appendChild(del);
+
+      fields.appendChild(alt);
+      fields.appendChild(row);
+      item.appendChild(fields);
+      box.appendChild(item);
+    });
+    $("org-bar").hidden = false;
+  }
+
+  function deletePhotoFile(src) {
+    var name = String(src).split("/").pop();
+    if (!name) return;
+    api("/repos/" + OWNER + "/" + REPO + "/contents/images/" + encodeURIComponent(name) + "?ref=" + BRANCH)
+      .then(function (meta) {
+        return api("/repos/" + OWNER + "/" + REPO + "/contents/images/" + encodeURIComponent(name), {
+          method: "DELETE",
+          body: JSON.stringify({ message: "photo: 删除 " + name, sha: meta.sha, branch: BRANCH })
+        });
+      })
+      .catch(function () { /* 文件删不掉不影响清单 */ });
+  }
+
+  function savePhotos() {
+    if (!orgState.photos.length) return;
+    var btn = $("btn-save-photos");
+    btn.disabled = true;
+    setStatus($("org-status"), "保存中…");
+
+    var lines = orgState.photos.map(function (p) {
+      var line = '  { src: "' + p.src + '", alt: ' + JSON.stringify(p.alt || "") +
+        ', cat: "' + (p.cat || "daily") + '"';
+      if (p.city) line += ', city: "' + p.city + '"';
+      if (p.width) line += ", width: " + p.width + ", height: " + p.height;
+      return line + " },";
+    }).join("\n");
+
+    var text = orgState.header + "\n" + lines + "\n" + orgState.tail;
+
+    api("/repos/" + OWNER + "/" + REPO + "/contents/assets/photos.js", {
+      method: "PUT",
+      body: JSON.stringify({
+        message: "photos: 整理归类",
+        content: utf8ToB64(text),
+        sha: orgState.sha,
+        branch: BRANCH
+      })
+    }).then(function (res) {
+      orgState.sha = res.content.sha;
+      setStatus($("org-status"), "已保存，约 1 分钟后生效", "ok");
+    }).catch(function (err) {
+      setStatus($("org-status"), "保存失败：" + err.message, "err");
+    }).then(function () { btn.disabled = false; });
   }
 
   var contentState = { data: null, sha: null };
@@ -678,7 +882,10 @@
   }
 
   if ($("tab-photo")) $("tab-photo").addEventListener("click", function () { switchTab("photo"); });
+  if ($("tab-organize")) $("tab-organize").addEventListener("click", function () { switchTab("organize"); });
   if ($("tab-text")) $("tab-text").addEventListener("click", function () { switchTab("text"); });
+  if ($("btn-reload-photos")) $("btn-reload-photos").addEventListener("click", loadPhotosOrg);
+  if ($("btn-save-photos")) $("btn-save-photos").addEventListener("click", savePhotos);
   if ($("btn-reload")) $("btn-reload").addEventListener("click", loadText);
   if ($("btn-save-text")) $("btn-save-text").addEventListener("click", saveText);
 

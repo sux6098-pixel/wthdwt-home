@@ -279,6 +279,64 @@ button { font-family: inherit; font-size: 15px; cursor: pointer; border-radius: 
 }
 .field select:focus { outline: 2px solid var(--line-2); outline-offset: 1px; }
 
+.city-sel {
+  max-width: 45%;
+  padding: 5px 8px;
+  background: #0b0b0b;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink-soft);
+  font-family: inherit;
+  font-size: 12px;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+/* 整理照片 */
+.org-item {
+  display: grid;
+  grid-template-columns: 76px 1fr;
+  gap: 12px;
+  padding: 10px;
+  margin-bottom: 10px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.org-item img {
+  width: 76px;
+  height: 76px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #1a1a1a;
+}
+.org-fields { display: grid; gap: 8px; min-width: 0; }
+.org-fields input[type="text"] {
+  width: 100%;
+  padding: 8px 10px;
+  background: #0b0b0b;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 13.5px;
+}
+.org-row { display: flex; align-items: center; gap: 8px; }
+.org-row select {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 8px;
+  background: #0b0b0b;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink-soft);
+  font-family: inherit;
+  font-size: 12.5px;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.org-row .tl-del { margin-left: auto; }
+
 .tl-block {
   border: 1px solid var(--line);
   border-radius: 14px;
