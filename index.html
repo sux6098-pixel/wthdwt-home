@@ -101,6 +101,168 @@
     setInterval(tick, 10000);
   })();
   </script>
+
+  <!-- ================= 关于我们 ================= -->
+  <section class="ab" id="about-us">
+    <header class="ab-head">
+      <span class="ab-label">关于 · About us</span>
+      <h2>我们</h2>
+    </header>
+
+    <div class="ab-grid">
+      <article class="ab-card">
+        <h3>wth</h3>
+        <p class="ab-sub">2007 · 天秤座</p>
+        <ul class="ab-list">
+          <li class="ab-row"><span class="ab-k">生日</span><span class="ab-v">2007.10.20</span></li>
+          <li class="ab-row"><span class="ab-k">年龄</span><span class="ab-v" data-birth="2007-10-20">—</span></li>
+          <li class="ab-row"><span class="ab-k">身高</span><span class="ab-v">180 cm</span></li>
+          <li class="ab-row"><span class="ab-k">体重</span><span class="ab-v">65 kg</span></li>
+        </ul>
+      </article>
+
+      <article class="ab-card">
+        <h3>dwt</h3>
+        <p class="ab-sub">2006 · 双鱼座</p>
+        <ul class="ab-list">
+          <li class="ab-row"><span class="ab-k">生日</span><span class="ab-v">2006.03.03</span></li>
+          <li class="ab-row"><span class="ab-k">年龄</span><span class="ab-v" data-birth="2006-03-03">—</span></li>
+          <li class="ab-row"><span class="ab-k">身高</span><span class="ab-v">168 cm</span></li>
+          <li class="ab-row"><span class="ab-k">体重</span><span class="ab-v">53 kg</span></li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================= 生日倒计时 ================= -->
+  <section class="bd" id="birthdays">
+    <header class="bd-head">
+      <span class="bd-label">生日 · Birthdays</span>
+      <h2>下一个生日</h2>
+    </header>
+
+    <div class="bd-grid">
+      <article class="bd-card" data-bday="2007-10-20">
+        <p class="bd-name">wth</p>
+        <p class="bd-num"><span class="bd-days">—</span><span class="bd-unit">天</span></p>
+        <p class="bd-meta"></p>
+      </article>
+
+      <article class="bd-card" data-bday="2006-03-03">
+        <p class="bd-name">dwt</p>
+        <p class="bd-num"><span class="bd-days">—</span><span class="bd-unit">天</span></p>
+        <p class="bd-meta"></p>
+      </article>
+    </div>
+  </section>
+
+  <style>
+    .ab,.bd{
+      max-width:1180px;margin:0 auto;
+      padding:clamp(48px,9vh,96px) clamp(18px,4vw,44px);
+    }
+    .bd{border-top:1px solid rgba(255,255,255,.10)}
+    .ab-head,.bd-head{margin-bottom:clamp(24px,4vw,40px)}
+    .ab-label,.bd-label{
+      display:block;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
+      letter-spacing:.22em;text-transform:uppercase;color:#8e8a82;margin-bottom:14px;
+    }
+    .ab-head h2,.bd-head h2{
+      margin:0;font-family:"Songti SC","Noto Serif SC",Georgia,serif;
+      font-weight:400;font-size:clamp(1.7rem,4vw,2.6rem);letter-spacing:-.01em;
+    }
+    .ab-grid,.bd-grid{
+      display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:clamp(14px,2.4vw,24px);
+    }
+    .ab-card,.bd-card{
+      background:#121212;border:1px solid rgba(255,255,255,.10);
+      border-radius:20px;padding:clamp(20px,3.2vw,32px);
+    }
+    .ab-card h3{
+      margin:0 0 6px;font-family:"Songti SC","Noto Serif SC",Georgia,serif;
+      font-weight:400;font-size:clamp(1.6rem,3.4vw,2.2rem);letter-spacing:-.01em;
+    }
+    .ab-sub{
+      margin:0;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
+      letter-spacing:.18em;text-transform:uppercase;color:#8e8a82;
+    }
+    .ab-list{list-style:none;margin:22px 0 0;padding:0}
+    .ab-row{
+      display:flex;align-items:baseline;justify-content:space-between;gap:14px;
+      padding:11px 0;border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .ab-row:last-child{border-bottom:none;padding-bottom:0}
+    .ab-k{
+      font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
+      letter-spacing:.18em;text-transform:uppercase;color:#8e8a82;
+    }
+    .ab-v{
+      font-family:"Songti SC","Noto Serif SC",Georgia,serif;
+      font-size:clamp(1rem,2vw,1.15rem);color:#f3f1ec;
+      font-variant-numeric:tabular-nums;
+    }
+    .bd-card{display:flex;flex-direction:column;gap:6px}
+    .bd-name{
+      margin:0;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
+      letter-spacing:.24em;text-transform:uppercase;color:#8e8a82;
+    }
+    .bd-num{display:flex;align-items:baseline;gap:8px;margin:6px 0 0}
+    .bd-days{
+      font-family:"Songti SC","Noto Serif SC",Georgia,serif;
+      font-size:clamp(2.8rem,8vw,4.4rem);line-height:1;color:#f3f1ec;
+      font-variant-numeric:tabular-nums;
+    }
+    .bd-unit{
+      font-family:ui-monospace,Menlo,monospace;font-size:11px;
+      letter-spacing:.2em;color:#8e8a82;
+    }
+    .bd-meta{margin:10px 0 0;font-size:12.5px;line-height:1.7;color:#8e8a82}
+    .bd-card.is-today .bd-days,.bd-card.is-today .bd-meta{color:#e8dfd2}
+    @media (max-width:620px){ .ab-grid,.bd-grid{grid-template-columns:1fr} }
+  </style>
+
+  <script>
+  (function () {
+    /* 年龄：按生日自动算，每年生日自动加一 */
+    document.querySelectorAll("[data-birth]").forEach(function (el) {
+      var b = new Date(el.getAttribute("data-birth") + "T00:00:00");
+      if (isNaN(b.getTime())) return;
+      var now = new Date();
+      var age = now.getFullYear() - b.getFullYear();
+      var m = now.getMonth() - b.getMonth();
+      if (m < 0 || (m === 0 && now.getDate() < b.getDate())) age--;
+      el.textContent = age + " 岁";
+    });
+
+    /* 生日倒计时：算到下一个生日 */
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
+    document.querySelectorAll(".bd-card[data-bday]").forEach(function (card) {
+      var p = card.getAttribute("data-bday").split("-");
+      var y = +p[0], m = +p[1], d = +p[2];
+      var next = new Date(today.getFullYear(), m - 1, d);
+      if (next < today) next = new Date(today.getFullYear() + 1, m - 1, d);
+      var days = Math.round((next - today) / 86400000);
+      var turning = next.getFullYear() - y;
+      var daysEl = card.querySelector(".bd-days");
+      var metaEl = card.querySelector(".bd-meta");
+      if (days === 0) {
+        card.classList.add("is-today");
+        if (daysEl) daysEl.textContent = "今";
+        if (metaEl) metaEl.textContent = "生日快乐 · 满 " + turning + " 岁";
+        return;
+      }
+      if (daysEl) daysEl.textContent = days;
+      if (metaEl) {
+        metaEl.textContent = next.getFullYear() + "." +
+          String(m).padStart(2, "0") + "." + String(d).padStart(2, "0") +
+          " · 满 " + turning + " 岁";
+      }
+    });
+  })();
+  </script>
+
   <!-- ================= STORY / CATEGORIES ================= -->
   <section class="section" id="story">
     <header class="section-head reveal">
