@@ -20,6 +20,13 @@ window.PHOTOS = [
   { src: "/images/p-20261115-232549-3.jpg", alt: "", cat: "daily", width: 1200, height: 1600 },
   { src: "/images/p-20261117-123332-1.jpg", alt: "猪", cat: "daily", width: 1200, height: 1600 },
   { src: "/images/p-20261117-172631-1.jpg", alt: "傻子吃面", cat: "daily", width: 1200, height: 1600 },
+  { src: "/images/p-20261117-181908-1.jpg", alt: "", cat: "trip", city: "福州", width: 1200, height: 1600 },
+  { src: "/images/p-20261117-181908-2.jpg", alt: "", cat: "trip", city: "福州", width: 1200, height: 1600 },
+  { src: "/images/p-20261117-181908-3.jpg", alt: "", cat: "trip", city: "福州", width: 1200, height: 1600 },
+  { src: "/images/p-20261117-181908-4.jpg", alt: "", cat: "trip", city: "福州", width: 1200, height: 1600 },
+  { src: "/images/p-20261117-181908-5.jpg", alt: "", cat: "trip", city: "福州", width: 1200, height: 1600 },
+  { src: "/images/p-20261117-181908-6.jpg", alt: "", cat: "trip", city: "福州", width: 1200, height: 1600 },
+  { src: "/images/p-20261117-181908-7.jpg", alt: "", cat: "trip", city: "福州", width: 1200, height: 1600 },
 ];
 
 /* 封面大图 */
