@@ -455,6 +455,25 @@
     return wrap;
   }
 
+  function selectField(labelText, value, options, onchange) {
+    var wrap = document.createElement("div");
+    wrap.className = "field";
+    var lab = document.createElement("label");
+    lab.textContent = labelText;
+    var sel = document.createElement("select");
+    options.forEach(function (o) {
+      var opt = document.createElement("option");
+      opt.value = o[0];
+      opt.textContent = o[1];
+      if (o[0] === value) opt.selected = true;
+      sel.appendChild(opt);
+    });
+    sel.addEventListener("change", function () { onchange(sel.value); });
+    wrap.appendChild(lab);
+    wrap.appendChild(sel);
+    return wrap;
+  }
+
   function section(title) {
     var s = document.createElement("div");
     s.className = "sec";
@@ -534,11 +553,88 @@
       block.appendChild(field("名字", p.name, function (v) { p.name = v; }));
       block.appendChild(field("生日（YYYY-MM-DD）", p.born, function (v) { p.born = v; }));
       block.appendChild(field("星座", p.zodiac, function (v) { p.zodiac = v; }));
-      block.appendChild(field("身高", p.height, function (v) { p.height = v; }));
-      block.appendChild(field("体重", p.weight, function (v) { p.weight = v; }));
       s5.appendChild(block);
     });
     form.appendChild(s5);
+
+    /* 旅行地图 */
+    var s6 = section("旅行 · 地图上的城市");
+    d.trips = d.trips || [];
+    d.trips.forEach(function (t, i) {
+      var block = document.createElement("div");
+      block.className = "tl-block";
+      var head = document.createElement("div");
+      head.className = "tl-head";
+      head.textContent = t.city || ("城市 " + (i + 1));
+      var del = document.createElement("button");
+      del.type = "button";
+      del.className = "tl-del";
+      del.textContent = "删除";
+      del.addEventListener("click", function () {
+        d.trips.splice(i, 1);
+        renderTextForm(d);
+      });
+      head.appendChild(del);
+      block.appendChild(head);
+      block.appendChild(field("城市名", t.city, function (v) { t.city = v; }));
+      block.appendChild(selectField("状态", t.status || "done",
+        [["done", "已去过"], ["planning", "计划中"]],
+        function (v) { t.status = v; }));
+      block.appendChild(field("经度（如 119.296）", t.lon, function (v) { t.lon = parseFloat(v); }));
+      block.appendChild(field("纬度（如 26.074）", t.lat, function (v) { t.lat = parseFloat(v); }));
+      block.appendChild(field("日期（可留空）", t.date, function (v) { t.date = v; }));
+      block.appendChild(field("这段旅行的故事", t.story, function (v) { t.story = v; }, true));
+      s6.appendChild(block);
+    });
+    var addTrip = document.createElement("button");
+    addTrip.type = "button";
+    addTrip.className = "add";
+    addTrip.textContent = "+ 添加城市";
+    addTrip.addEventListener("click", function () {
+      d.trips.push({ city: "", lon: 0, lat: 0, date: "", status: "planning", story: "", photos: [] });
+      renderTextForm(d);
+    });
+    s6.appendChild(addTrip);
+    form.appendChild(s6);
+
+    /* 未来计划 */
+    var s7 = section("未来计划");
+    d.plans = d.plans || [];
+    d.plans.forEach(function (p, i) {
+      var block = document.createElement("div");
+      block.className = "tl-block";
+      var head = document.createElement("div");
+      head.className = "tl-head";
+      head.textContent = p.title || ("计划 " + (i + 1));
+      var del = document.createElement("button");
+      del.type = "button";
+      del.className = "tl-del";
+      del.textContent = "删除";
+      del.addEventListener("click", function () {
+        d.plans.splice(i, 1);
+        renderTextForm(d);
+      });
+      head.appendChild(del);
+      block.appendChild(head);
+      block.appendChild(field("计划名称", p.title, function (v) { p.title = v; }));
+      block.appendChild(field("地点", p.place, function (v) { p.place = v; }));
+      block.appendChild(field("日期", p.date, function (v) { p.date = v; }));
+      block.appendChild(selectField("状态", p.status || "planning",
+        [["planning", "计划中"], ["done", "已完成"], ["paused", "暂停"]],
+        function (v) { p.status = v; }));
+      block.appendChild(field("说明", p.note, function (v) { p.note = v; }, true));
+      s7.appendChild(block);
+    });
+    var addPlan = document.createElement("button");
+    addPlan.type = "button";
+    addPlan.className = "add";
+    addPlan.textContent = "+ 添加计划";
+    addPlan.addEventListener("click", function () {
+      d.plans.push({ title: "", place: "", date: "", status: "planning", note: "" });
+      renderTextForm(d);
+    });
+    s7.appendChild(addPlan);
+    form.appendChild(s7);
 
     $("text-bar").hidden = false;
     $("btn-save-text").disabled = false;

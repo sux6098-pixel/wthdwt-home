@@ -592,6 +592,194 @@ p:last-child { margin-bottom: 0; }
   .gallery { columns: 1; }
 }
 
+/* ============================================================
+   旅行地图
+   ============================================================ */
+.travel-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: clamp(16px, 2.4vw, 28px);
+  align-items: start;
+}
+
+.map-host {
+  position: relative;
+  background: #0b0b0b;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: clamp(10px, 1.6vw, 20px);
+  overflow: hidden;
+}
+.map-svg { display: block; width: 100%; height: auto; }
+
+.map-prov path {
+  fill: rgba(255, 255, 255, 0.045);
+  stroke: rgba(255, 255, 255, 0.14);
+  stroke-width: 0.6;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  transition: fill 0.25s var(--ease);
+}
+.map-prov path:hover { fill: rgba(255, 255, 255, 0.09); }
+
+.map-route {
+  fill: none;
+  stroke: #e8dfd2;
+  stroke-width: 1.1;
+  stroke-dasharray: 5 5;
+  opacity: 0.45;
+  vector-effect: non-scaling-stroke;
+}
+
+.pin { cursor: pointer; }
+.pin-halo {
+  fill: rgba(232, 223, 210, 0.10);
+  stroke: rgba(232, 223, 210, 0.35);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  transition: fill 0.2s var(--ease), stroke 0.2s var(--ease);
+}
+.pin-dot { fill: #e8dfd2; }
+.pin-label {
+  font-family: var(--mono);
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  fill: #cfcbc3;
+  paint-order: stroke;
+  stroke: rgba(7, 7, 7, 0.9);
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
+.pin:hover .pin-halo,
+.pin.is-active .pin-halo {
+  fill: rgba(232, 223, 210, 0.28);
+  stroke: #e8dfd2;
+  stroke-width: 1.6;
+}
+.pin-planned .pin-halo {
+  fill: none;
+  stroke-dasharray: 3 3;
+}
+.pin-planned .pin-dot { fill: transparent; stroke: #e8dfd2; stroke-width: 1.4; }
+.pin-planned .pin-label { fill: #8e8a82; }
+
+.map-fail { color: var(--muted); font-size: 13px; padding: 40px; text-align: center; }
+
+/* 城市详情 */
+.city-detail {
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--card);
+  padding: clamp(18px, 2.4vw, 24px);
+  min-height: 200px;
+}
+.city-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.city-head h3 {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(1.3rem, 2.6vw, 1.7rem);
+}
+.city-badge {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+}
+.city-badge.is-planned { color: #e8dfd2; border-color: var(--line-2); }
+.city-meta {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+.city-story { font-size: 14px; color: var(--ink-soft); margin: 0 0 14px; }
+.city-photos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.city-ph { margin: 0; border-radius: 10px; overflow: hidden; }
+.city-ph img { width: 100%; height: 100%; object-fit: cover; aspect-ratio: 1 / 1; }
+.city-detail:empty::after {
+  content: "点地图上的城市";
+  display: block;
+  padding: 40px 0;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* ============================================================
+   未来计划
+   ============================================================ */
+.plans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: clamp(14px, 2.2vw, 22px);
+}
+.plans-empty { color: var(--muted); font-size: 14px; }
+.plan {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--card);
+  padding: clamp(18px, 2.4vw, 24px);
+  transition: border-color 0.25s var(--ease), transform 0.3s var(--ease);
+}
+.plan:hover { border-color: var(--line-2); transform: translateY(-3px); }
+.plan-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.plan-status {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+.plan-planning .plan-status { color: #e8dfd2; border-color: var(--line-2); }
+.plan-done .plan-status { color: #6ee7a8; border-color: rgba(110, 231, 168, 0.35); }
+.plan-paused .plan-status { color: #8e8a82; }
+.plan-date {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+.plan h3 {
+  margin: 0 0 6px;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(1.15rem, 2.2vw, 1.4rem);
+}
+.plan-place {
+  margin: 0 0 8px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.plan-note { margin: 0; font-size: 13.5px; color: var(--ink-soft); }
+
+@media (max-width: 860px) {
+  .travel-wrap { grid-template-columns: 1fr; }
+  .city-detail { min-height: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {

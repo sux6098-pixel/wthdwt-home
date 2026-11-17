@@ -21,7 +21,9 @@
   <nav aria-label="站点导航">
     <a href="#story">故事</a>
     <a href="#gallery">相册</a>
-    <a href="#timeline">时间线</a>
+    <a href="#travel">旅行</a>
+    <a href="#future">未来</a>
+    <a href="#timeline">我们</a>
     <a href="#notes">留言</a>
   </nav>
 </header>
@@ -284,7 +286,7 @@
         </div>
       </a>
 
-      <a class="card reveal" href="#gallery" data-filter="trip">
+      <a class="card reveal" href="#travel">
         <div class="card-media"><img src="/images/03.jpg" alt="旅行合影" loading="lazy" decoding="async"></div>
         <div class="card-body">
           <span class="card-index">02</span>
@@ -338,10 +340,33 @@
     </p>
   </section>
 
+  <!-- ================= 旅行地图 ================= -->
+  <section class="section travel" id="travel">
+    <header class="section-head reveal">
+      <span class="label">03 — 旅行 · Travel</span>
+      <h2>一起走过的地方</h2>
+      <p class="section-note">点城市看照片和故事。虚线是还没去的地方。</p>
+    </header>
+
+    <div class="travel-wrap">
+      <div class="map-host" id="travel-map" aria-live="polite"></div>
+      <aside class="city-detail" id="city-detail"></aside>
+    </div>
+  </section>
+
+  <!-- ================= 未来计划 ================= -->
+  <section class="section future" id="future">
+    <header class="section-head reveal">
+      <span class="label">04 — 未来 · Future</span>
+      <h2>下一站，我们一起去</h2>
+    </header>
+    <div class="plans-grid" id="plans-grid"></div>
+  </section>
+
   <!-- ================= TIMELINE ================= -->
   <section class="section" id="timeline">
     <header class="section-head reveal">
-      <span class="label">03 — 时间线 · Timeline</span>
+      <span class="label">05 — 我们 · Story</span>
       <h2>我们怎么走到这里</h2>
     </header>
 
@@ -411,6 +436,7 @@
 </div>
 
 <script src="/assets/photos.js" defer></script>
+<script src="/assets/map.js" defer></script>
 <script src="/assets/content.js" defer></script>
 <script src="/assets/main.js" defer></script>
 </body>

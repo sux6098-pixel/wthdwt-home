@@ -78,7 +78,11 @@
       var age = ageOf(p.born);
       var year = p.born ? String(p.born).slice(0, 4) : "";
       var sub = [year, p.zodiac].filter(Boolean).join(" · ");
+      var md = "";
+      var parts = p.born ? String(p.born).split("-") : [];
+      if (parts.length === 3) md = parts[1] + "." + parts[2];
       function row(k, v) {
+        if (!v) return "";
         return '<li class="ab-row"><span class="ab-k">' + esc(k) +
           '</span><span class="ab-v">' + esc(v) + "</span></li>";
       }
@@ -86,11 +90,38 @@
         "<h3>" + esc(p.name) + "</h3>" +
         '<p class="ab-sub">' + esc(sub) + "</p>" +
         '<ul class="ab-list">' +
-        row("生日", p.born ? String(p.born).replace(/-/g, ".") : "") +
+        row("生日", md) +
         row("年龄", age == null ? "" : age + " 岁") +
-        row("身高", p.height || "") +
-        row("体重", p.weight || "") +
+        row("星座", p.zodiac || "") +
         "</ul></article>";
+    }).join("");
+  }
+
+  function renderTravel(trips) {
+    var host = document.getElementById("travel-map");
+    if (!host || !window.TravelMap) return;
+    window.TravelMap.render(host, trips || []);
+  }
+
+  var PLAN_STATUS = { planning: "计划中", done: "已完成", paused: "暂停" };
+
+  function renderPlans(plans) {
+    var grid = document.getElementById("plans-grid");
+    if (!grid) return;
+    if (!plans || !plans.length) {
+      grid.innerHTML = '<p class="plans-empty">还没有写下计划。</p>';
+      return;
+    }
+    grid.innerHTML = plans.map(function (p) {
+      var st = PLAN_STATUS[p.status] || "计划中";
+      var date = p.date ? String(p.date).replace(/-/g, ".") : "";
+      return '<article class="plan plan-' + esc(p.status || "planning") + '">' +
+        '<div class="plan-top"><span class="plan-status">' + esc(st) + "</span>" +
+        (date ? '<span class="plan-date">' + esc(date) + "</span>" : "") + "</div>" +
+        "<h3>" + esc(p.title) + "</h3>" +
+        (p.place ? '<p class="plan-place">' + esc(p.place) + "</p>" : "") +
+        (p.note ? '<p class="plan-note">' + esc(p.note) + "</p>" : "") +
+        "</article>";
     }).join("");
   }
 
@@ -168,6 +199,8 @@
       renderSite(d.site || {});
       renderAbout(d.about || []);
       renderBirthdays(d.about || []);
+      renderTravel(d.trips || []);
+      renderPlans(d.plans || []);
       renderCards(d.cards || []);
       renderTimeline(d.timeline || []);
       renderNote(d.note || {});

@@ -265,6 +265,19 @@ button { font-family: inherit; font-size: 15px; cursor: pointer; border-radius: 
 }
 .field textarea { min-height: 76px; }
 .field input:focus, .field textarea:focus { outline: 2px solid var(--line-2); outline-offset: 1px; }
+.field select {
+  width: 100%;
+  padding: 11px 13px;
+  background: #0b0b0b;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 14px;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.field select:focus { outline: 2px solid var(--line-2); outline-offset: 1px; }
 
 .tl-block {
   border: 1px solid var(--line);
