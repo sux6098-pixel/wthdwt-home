@@ -27,6 +27,18 @@ window.PHOTOS = [
   { src: "/images/p-20261117-181908-5.jpg", alt: "", cat: "trip", city: "福州", width: 1200, height: 1600 },
   { src: "/images/p-20261117-181908-6.jpg", alt: "", cat: "trip", city: "福州", width: 1200, height: 1600 },
   { src: "/images/p-20261117-181908-7.jpg", alt: "", cat: "trip", city: "福州", width: 1200, height: 1600 },
+  { src: "/images/p-20261117-185547-1.jpg", alt: "", cat: "trip", city: "长沙", width: 1200, height: 1600 },
+  { src: "/images/p-20261117-185547-2.jpg", alt: "", cat: "trip", city: "长沙", width: 1200, height: 1600 },
+  { src: "/images/p-20261117-185547-3.jpg", alt: "", cat: "trip", city: "长沙", width: 1200, height: 1600 },
+  { src: "/images/p-20261117-185547-4.jpg", alt: "", cat: "trip", city: "长沙", width: 1600, height: 1200 },
+  { src: "/images/p-20261117-185547-5.jpg", alt: "", cat: "trip", city: "长沙", width: 1200, height: 1600 },
+  { src: "/images/p-20261117-185547-6.jpg", alt: "", cat: "trip", city: "长沙", width: 1200, height: 1600 },
+  { src: "/images/p-20261117-185547-7.jpg", alt: "", cat: "trip", city: "长沙", width: 1200, height: 1600 },
+  { src: "/images/p-20261117-185547-8.jpg", alt: "", cat: "trip", city: "长沙", width: 1200, height: 1600 },
+  { src: "/images/p-20261117-185547-9.jpg", alt: "", cat: "trip", city: "长沙", width: 1200, height: 1600 },
+  { src: "/images/p-20261117-185547-10.jpg", alt: "", cat: "trip", city: "长沙", width: 1200, height: 1600 },
+  { src: "/images/p-20261117-185547-11.jpg", alt: "", cat: "trip", city: "长沙", width: 1200, height: 1600 },
+  { src: "/images/p-20261117-185547-12.jpg", alt: "", cat: "trip", city: "长沙", width: 1200, height: 1600 },
 ];
 
 /* 封面大图 */
