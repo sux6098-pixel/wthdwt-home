@@ -6,9 +6,9 @@
    alt 会显示在照片下方，也是读屏文字。
    ============================================================ */
 window.PHOTOS = [
-  { src: "/images/01.jpg", alt: "车窗边，比了个耶", cat: "daily", width: 1279, height: 1706 },
-  { src: "/images/02.jpg", alt: "商场外，帽子挡着风", cat: "trip", width: 1279, height: 1706 },
-  { src: "/images/03.jpg", alt: "旅行途中，雕像前的合影", cat: "trip", width: 1279, height: 1706 },
+  { src: "/images/01.jpg", alt: "车窗边，比了个耶", cat: "daily", city: "长沙", width: 1279, height: 1706 },
+  { src: "/images/02.jpg", alt: "商场外，帽子挡着风", cat: "trip", city: "长沙", width: 1279, height: 1706 },
+  { src: "/images/03.jpg", alt: "旅行途中，雕像前的合影", cat: "trip", city: "长沙", width: 1279, height: 1706 },
   { src: "/images/04.jpg", alt: "街边坐着聊了很久", cat: "daily", width: 1279, height: 1706 },
   { src: "/images/05.jpg", alt: "黑白合影，嘴里还叼着糖", cat: "daily", width: 949, height: 1259 },
   { src: "/images/06.jpg", alt: "抬头看天，风很大", cat: "daily", width: 1706, height: 1279 },
