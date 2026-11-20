@@ -41,6 +41,11 @@ window.PHOTOS = [
   { src: "/images/p-20261117-185547-12.jpg", alt: "", cat: "trip", city: "长沙", width: 1200, height: 1600 },
   { src: "/images/p-20261118-101232-1.jpg", alt: "11.18 ootd", cat: "daily", width: 1200, height: 1600 },
   { src: "/images/p-20261119-101058-1.jpg", alt: "芝士鸡肉帕尼尼配热豆浆 美好的一天开始", cat: "daily", width: 1600, height: 1200 },
+  { src: "/images/p-20261120-210008-1.jpg", alt: "秋水广场游", cat: "daily", width: 1200, height: 1600 },
+  { src: "/images/p-20261120-210008-2.jpg", alt: "", cat: "daily", width: 1200, height: 1600 },
+  { src: "/images/p-20261120-210008-3.jpg", alt: "", cat: "daily", width: 1200, height: 1600 },
+  { src: "/images/p-20261120-210008-4.jpg", alt: "", cat: "daily", width: 1600, height: 1200 },
+  { src: "/images/p-20261120-210008-5.jpg", alt: "", cat: "daily", width: 1600, height: 1200 },
 ];
 
 /* 封面大图 */
