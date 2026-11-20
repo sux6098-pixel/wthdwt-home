@@ -66,6 +66,19 @@
 
     <div id="queue" class="queue"></div>
 
+    <div id="attach-box" class="attach-box" hidden>
+      <label for="upload-target">这批照片接到哪一天</label>
+      <select id="upload-target">
+        <option value="">只放进相册，不接时间线</option>
+        <option value="__new__">＋ 新建一条时间线</option>
+      </select>
+      <div id="new-moment" class="new-moment" hidden>
+        <input id="new-date" type="date" aria-label="新的一条的日期">
+        <input id="new-title" type="text" placeholder="标题，例如：第一次一起过生日">
+      </div>
+      <p class="attach-tip">选一条已有的日子，照片会直接接在那一篇后面；也可以新建一条。</p>
+    </div>
+
     <div id="submit-bar" class="submit-bar" hidden>
       <button id="btn-submit" class="primary" type="button">上传 <span id="count">0</span> 张</button>
     </div>

@@ -75,6 +75,8 @@
         rings.forEach(function (poly) {
           poly.forEach(function (ring) {
             for (var i = 0; i < ring.length; i++) {
+              /* 南沙群岛会把画布拉得很长，取景时只按大陆 + 海南计算 */
+              if (ring[i][1] < 17) continue;
               var p = project(ring[i][0], ring[i][1]);
               if (p[0] < minX) minX = p[0];
               if (p[0] > maxX) maxX = p[0];
@@ -85,10 +87,10 @@
         });
       });
 
-      var pad = 0.9;
-      var scale = W / (maxX - minX + pad * 2);
-      var H = Math.round((maxY - minY + pad * 2) * scale);
-      var offset = [minX - pad, minY - pad];
+      var pad = 26;
+      var scale = (W - pad * 2) / (maxX - minX);
+      var H = Math.round((maxY - minY) * scale + pad * 2);
+      var offset = [minX - pad / scale, minY - pad / scale];
 
       host.innerHTML = "";
       var svg = el("svg", {
@@ -146,7 +148,12 @@
         g.appendChild(el("circle", { r: planned ? 22 : 20, class: "pin-halo" }));
         g.appendChild(el("circle", { r: planned ? 8 : 7, class: "pin-dot" }));
 
-        var label = el("text", { class: "pin-label", y: -30, "text-anchor": "middle" });
+        var label = el("text", {
+          class: "pin-label",
+          x: typeof t.labelX === "number" ? t.labelX : 0,
+          y: typeof t.labelY === "number" ? t.labelY : -30,
+          "text-anchor": t.labelAnchor || "middle"
+        });
         label.textContent = t.city;
         g.appendChild(label);
 
@@ -188,7 +195,10 @@
         if (e.target === layer) closeLayer();
       });
       document.addEventListener("keydown", function (e) {
-        if (e.key === "Escape" && layer && !layer.hidden) closeLayer();
+        if (e.key !== "Escape" || !layer || layer.hidden) return;
+        var lightbox = document.getElementById("lightbox");
+        if (lightbox && !lightbox.hidden) return;
+        closeLayer();
       });
     }
   }

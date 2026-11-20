@@ -1,24 +1,89 @@
 {
-  "site": {
-    "mark": "wth & dwt",
-    "titleA": "wth",
-    "titleB": "dwt",
-    "since": "2026-05-21"
-  },
   "hero": {
     "en": "Some moments deserve to stay forever.",
-    "cn": "我们的故事 · Our Story"
+    "cn": "两个人的一条时间线 · A Timeline of Us"
   },
   "about": [
+    { "name": "wth", "born": "2007-10-20", "zodiac": "天秤座" },
+    { "name": "dwt", "born": "2006-03-03", "zodiac": "双鱼座" }
+  ],
+  "moments": [
     {
-      "name": "wth",
-      "born": "2007-10-20",
-      "zodiac": "天秤座"
+      "id": "first-meet",
+      "date": "2025-11-01",
+      "label": "2025.11",
+      "sub": "最开始",
+      "title": "军训",
+      "text": "第一次认识是在军训。晒得很黑，偶尔聊两句，后来加了微信。那时候谁也没想到，这个人会变成之后所有故事的开头。",
+      "kind": "story"
     },
     {
-      "name": "dwt",
-      "born": "2006-03-03",
-      "zodiac": "双鱼座"
+      "id": "first-movie",
+      "date": "2026-05-21",
+      "label": "2026.05.21",
+      "sub": "在一起",
+      "title": "一场电影，牵了手",
+      "text": "送你回家乡的那次，你请我看了一场电影。散场的时候牵了手，就这么算在一起了。",
+      "kind": "milestone",
+      "photos": ["/images/05.jpg"]
+    },
+    {
+      "id": "fuzhou",
+      "date": "2026-08-01",
+      "label": "2026.08",
+      "sub": "第一个夏天",
+      "title": "福州",
+      "text": "第一次一起出远门。老城区的街道、巷子里的味道，都还记得。",
+      "kind": "trip",
+      "place": "福州",
+      "photos": ["/images/01.jpg", "/images/02.jpg"]
+    },
+    {
+      "id": "changsha",
+      "date": "2026-10-01",
+      "label": "2026.10",
+      "sub": "又过了一阵",
+      "title": "长沙",
+      "text": "第二次一起出门。吃了很多，走了很多路，在雕像前面拍了一张很游客的合影。",
+      "kind": "trip",
+      "place": "长沙",
+      "photos": ["/images/03.jpg", "/images/04.jpg"]
+    },
+    {
+      "id": "route",
+      "date": "2026-10-20",
+      "label": "到目前为止",
+      "sub": "两颗点",
+      "title": "把去过的点连起来",
+      "text": "福州、长沙。地图上只有两个点，但每一个点都对应着一段具体的日子。点一下，能看到那次的照片。",
+      "kind": "map",
+      "map": true
+    },
+    {
+      "id": "november",
+      "date": "2026-11-15",
+      "label": "2026.11.15",
+      "sub": "日常",
+      "title": "一些很小的日常",
+      "text": "天冷了。马甲第一次出门，走了很多路，也拍了一些没什么用、但舍不得删的照片。",
+      "kind": "photo",
+      "photos": [
+        "/images/p-20261115-120319-1.jpg",
+        "/images/06.jpg"
+      ]
+    },
+    {
+      "id": "now",
+      "date": "2026-11-20",
+      "label": "现在",
+      "sub": "还在继续",
+      "title": "继续往下走",
+      "text": "还有很多地方没去，很多照片没拍。慢慢走。",
+      "kind": "message",
+      "message": {
+        "text": "坚持你的一切选择。",
+        "by": "wth"
+      }
     }
   ],
   "trips": [
@@ -26,18 +91,24 @@
       "city": "福州",
       "lon": 119.296,
       "lat": 26.074,
-      "date": "",
+      "date": "2026-08-01",
       "status": "done",
       "story": "第一次一起去的地方。老城区的街道、巷子里的味道，都还记得。",
+      "labelX": 16,
+      "labelY": 8,
+      "labelAnchor": "start",
       "photos": []
     },
     {
       "city": "长沙",
       "lon": 112.938,
       "lat": 28.228,
-      "date": "",
+      "date": "2026-10-01",
       "status": "done",
       "story": "第二次一起出门。吃了很多，走了很多路。",
+      "labelX": -15,
+      "labelY": 7,
+      "labelAnchor": "end",
       "photos": []
     },
     {
@@ -47,6 +118,9 @@
       "date": "2027-01-01",
       "status": "planning",
       "story": "元旦一起去看雪。还没去，先记在这里。",
+      "labelX": 14,
+      "labelY": -18,
+      "labelAnchor": "start",
       "photos": []
     }
   ],
@@ -58,59 +132,5 @@
       "status": "planning",
       "note": "元旦出发，第一次一起看雪。"
     }
-  ],
-  "cards": [
-    {
-      "title": "我们的日常",
-      "sub": "生活碎片与日常照片"
-    },
-    {
-      "title": "一起去过的地方",
-      "sub": "旅行、散步与风景"
-    },
-    {
-      "title": "照片时间线",
-      "sub": "按照日期收藏回忆"
-    },
-    {
-      "title": "写给彼此的话",
-      "sub": "留言、纪念日和小故事"
-    }
-  ],
-  "timeline": [
-    {
-      "when": "开始",
-      "title": "军训",
-      "text": "军训的时候，我们偶尔聊聊天，后来加了微信。就这样，慢慢认识了彼此。"
-    },
-    {
-      "when": "那天",
-      "title": "第一次牵手",
-      "text": "送你回到家乡的那次，你请我看了一场电影。电影中，我们牵了手。"
-    },
-    {
-      "when": "现在",
-      "title": "继续往下走",
-      "text": "还有很多地方没去，慢慢走。"
-    },
-    {
-      "when": "2026年11月17日",
-      "title": "晚饭后",
-      "text": "dwt去跳舞我在pubg"
-    },
-    {
-      "when": "2026.11.20",
-      "title": "秋水广场游",
-      "text": "我和dwt游秋水广场 拍了拍照 看了喷泉 吃了酱香饼 不好吃"
-    }
-  ],
-  "note": {
-    "text": "坚持你的一切选择。",
-    "by": "wth"
-  },
-  "end": {
-    "line": "谢谢你来这里看我们。",
-    "sign": "wth & dwt"
-  },
-  "footer": "保留所有照片权利"
+  ]
 }

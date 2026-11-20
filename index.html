@@ -3,450 +3,193 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>wth &amp; dwt</title>
-<meta name="description" content="Some moments deserve to stay forever. 我们的故事。">
-<meta name="theme-color" content="#080808">
+<title>wth &amp; dwt · 一条时间线</title>
+<meta name="description" content="两个人的一条时间线：照片、故事、留言和旅行，按发生的顺序放在一起。">
+<meta name="theme-color" content="#080807">
 <meta name="robots" content="index, follow">
-<meta property="og:title" content="wth &amp; dwt">
-<meta property="og:description" content="Some moments deserve to stay forever. 我们的故事。">
+<meta property="og:title" content="wth &amp; dwt · 一条时间线">
+<meta property="og:description" content="Some moments deserve to stay forever. 照片、故事、留言和旅行，都在同一条线上。">
 <meta property="og:type" content="website">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preload" as="image" href="/images/05.jpg" fetchpriority="high">
+<script>document.documentElement.classList.add("js");</script>
 <link rel="stylesheet" href="/assets/styles.css">
 </head>
 <body>
-<a class="skip-link" href="#main">跳到主要内容</a>
+<a class="skip-link" href="#timeline">跳到时间线</a>
+<div class="grain" aria-hidden="true"></div>
 
-<header class="topbar">
+<header class="topbar" id="topbar">
   <a class="mark" href="#top">wth <em>&amp;</em> dwt</a>
-  <nav aria-label="站点导航">
-    <a href="#story">故事</a>
-    <a href="#gallery">相册</a>
-    <a href="#travel">旅行</a>
-    <a href="#future">未来</a>
-    <a href="#timeline">我们</a>
-    <a href="#notes">留言</a>
-  </nav>
+  <div class="tb-right">
+    <nav aria-label="站点导航">
+      <button type="button" id="search-open" class="search-open" aria-label="搜索时间线">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4.2-4.2"/></svg>
+        <span>找一天</span>
+      </button>
+      <a href="#timeline">时间线</a>
+      <a href="#travel-map">地图</a>
+      <button type="button" id="about-open" aria-haspopup="dialog">我们</button>
+    </nav>
+    <a class="tb-days" href="#now" aria-label="跳到时间线最近的部分">
+      <span id="top-days">—</span><i>天</i>
+    </a>
+  </div>
 </header>
 
 <main id="main">
 
   <!-- ================= HERO ================= -->
   <section class="hero" id="top">
-    <div class="hero-bg" aria-hidden="true">
-      <img class="hero-img" src="/images/05.jpg" alt="" fetchpriority="high" decoding="async">
+    <div class="hero-media" aria-hidden="true">
+      <img src="/images/05.jpg" alt="" fetchpriority="high" decoding="async">
     </div>
+    <div class="hero-veil" aria-hidden="true"></div>
 
-    <div class="hero-content">
-      <p class="kicker reveal">自 <time id="since-date" datetime="">____.__.__</time> 起 · <span id="days">—</span> 天</p>
+    <div class="hero-inner">
+      <p class="hero-kicker">
+        <span class="pulse" aria-hidden="true"></span>
+        自 <time id="since-date" datetime="2026-05-21">2026.05.21</time> 起 · 第 <span id="days">—</span> 天
+      </p>
+
       <h1 class="hero-title reveal">wth <em>&amp;</em><br>dwt</h1>
+
       <p class="hero-en reveal">Some moments deserve to stay forever.</p>
-      <p class="hero-cn reveal">我们的故事 · Our Story</p>
-      <a class="hero-cue" href="#story" aria-label="向下浏览">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M12 4v16M6 14l6 6 6-6"/></svg>
-      </a>
-    </div>
-  </section>
-  <!-- ================= 恋爱计时器 ================= -->
-  <section class="love-timer" aria-label="在一起的时间">
-    <p class="lt-label">在一起</p>
-    <div class="lt-grid">
-      <div class="lt-cell"><span class="lt-num" id="lt-days">0</span><span class="lt-unit">天</span></div>
-      <div class="lt-cell"><span class="lt-num" id="lt-hours">0</span><span class="lt-unit">时</span></div>
-      <div class="lt-cell"><span class="lt-num" id="lt-mins">0</span><span class="lt-unit">分</span></div>
-    </div>
-    <p class="lt-since">SINCE 2026.05.21</p>
-  </section>
+      <p class="hero-cn reveal">两个人的一条时间线 · A TIMELINE OF US</p>
 
-  <style>
-    .love-timer{
-      max-width:1180px;margin:0 auto;
-      padding:clamp(36px,7vh,72px) clamp(18px,4vw,44px);
-      text-align:center;
-      border-top:1px solid rgba(255,255,255,.10);
-      border-bottom:1px solid rgba(255,255,255,.10);
-    }
-    .lt-label{
-      font-family:ui-monospace,Menlo,monospace;font-size:10.5px;letter-spacing:.28em;
-      text-transform:uppercase;color:#8e8a82;margin:0 0 22px;
-    }
-    .lt-grid{display:flex;align-items:flex-end;justify-content:center;gap:clamp(24px,7vw,80px)}
-    .lt-cell{display:flex;flex-direction:column;align-items:center;gap:6px}
-    .lt-num{
-      font-family:"Songti SC","Noto Serif SC",Georgia,serif;
-      font-size:clamp(2.6rem,8vw,4.8rem);line-height:1;color:#f3f1ec;
-      font-variant-numeric:tabular-nums;
-    }
-    .lt-unit{font-family:ui-monospace,Menlo,monospace;font-size:10.5px;letter-spacing:.2em;color:#8e8a82}
-    .lt-since{
-      margin:26px 0 0;font-family:ui-monospace,Menlo,monospace;
-      font-size:10px;letter-spacing:.22em;color:#5f5b54;
-    }
-    @media (max-width:520px){ .lt-grid{gap:18px} }
-  </style>
-
-  <script>
-  (function () {
-    var START = new Date("2026-05-21T00:00:00");
-    var d = document.getElementById("lt-days");
-    var h = document.getElementById("lt-hours");
-    var m = document.getElementById("lt-mins");
-    function pad(n) { return n < 10 ? "0" + n : String(n); }
-    function tick() {
-      var t = Date.now() - START.getTime();
-      if (t < 0) t = 0;
-      var sec = Math.floor(t / 1000);
-      d.textContent = Math.floor(sec / 86400);
-      h.textContent = pad(Math.floor(sec % 86400 / 3600));
-      m.textContent = pad(Math.floor(sec % 3600 / 60));
-    }
-    tick();
-    setInterval(tick, 10000);
-  })();
-  </script>
-
-  <!-- ================= 关于我们 ================= -->
-  <section class="ab" id="about-us">
-    <header class="ab-head">
-      <span class="ab-label">关于 · About us</span>
-      <h2>我们</h2>
-    </header>
-
-    <div class="ab-grid">
-      <article class="ab-card">
-        <h3>wth</h3>
-        <p class="ab-sub">2007 · 天秤座</p>
-        <ul class="ab-list">
-          <li class="ab-row"><span class="ab-k">生日</span><span class="ab-v">2007.10.20</span></li>
-          <li class="ab-row"><span class="ab-k">年龄</span><span class="ab-v" data-birth="2007-10-20">—</span></li>
-          <li class="ab-row"><span class="ab-k">身高</span><span class="ab-v">180 cm</span></li>
-          <li class="ab-row"><span class="ab-k">体重</span><span class="ab-v">65 kg</span></li>
-        </ul>
-      </article>
-
-      <article class="ab-card">
-        <h3>dwt</h3>
-        <p class="ab-sub">2006 · 双鱼座</p>
-        <ul class="ab-list">
-          <li class="ab-row"><span class="ab-k">生日</span><span class="ab-v">2006.03.03</span></li>
-          <li class="ab-row"><span class="ab-k">年龄</span><span class="ab-v" data-birth="2006-03-03">—</span></li>
-          <li class="ab-row"><span class="ab-k">身高</span><span class="ab-v">168 cm</span></li>
-          <li class="ab-row"><span class="ab-k">体重</span><span class="ab-v">53 kg</span></li>
-        </ul>
-      </article>
-    </div>
-  </section>
-
-  <!-- ================= 生日倒计时 ================= -->
-  <section class="bd" id="birthdays">
-    <header class="bd-head">
-      <span class="bd-label">生日 · Birthdays</span>
-      <h2>下一个生日</h2>
-    </header>
-
-    <div class="bd-grid">
-      <article class="bd-card" data-bday="2007-10-20">
-        <p class="bd-name">wth</p>
-        <p class="bd-num"><span class="bd-days">—</span><span class="bd-unit">天</span></p>
-        <p class="bd-meta"></p>
-      </article>
-
-      <article class="bd-card" data-bday="2006-03-03">
-        <p class="bd-name">dwt</p>
-        <p class="bd-num"><span class="bd-days">—</span><span class="bd-unit">天</span></p>
-        <p class="bd-meta"></p>
-      </article>
-    </div>
-  </section>
-
-  <style>
-    .ab,.bd{
-      max-width:1180px;margin:0 auto;
-      padding:clamp(48px,9vh,96px) clamp(18px,4vw,44px);
-    }
-    .bd{border-top:1px solid rgba(255,255,255,.10)}
-    .ab-head,.bd-head{margin-bottom:clamp(24px,4vw,40px)}
-    .ab-label,.bd-label{
-      display:block;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
-      letter-spacing:.22em;text-transform:uppercase;color:#8e8a82;margin-bottom:14px;
-    }
-    .ab-head h2,.bd-head h2{
-      margin:0;font-family:"Songti SC","Noto Serif SC",Georgia,serif;
-      font-weight:400;font-size:clamp(1.7rem,4vw,2.6rem);letter-spacing:-.01em;
-    }
-    .ab-grid,.bd-grid{
-      display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:clamp(14px,2.4vw,24px);
-    }
-    .ab-card,.bd-card{
-      background:#121212;border:1px solid rgba(255,255,255,.10);
-      border-radius:20px;padding:clamp(20px,3.2vw,32px);
-    }
-    .ab-card h3{
-      margin:0 0 6px;font-family:"Songti SC","Noto Serif SC",Georgia,serif;
-      font-weight:400;font-size:clamp(1.6rem,3.4vw,2.2rem);letter-spacing:-.01em;
-    }
-    .ab-sub{
-      margin:0;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
-      letter-spacing:.18em;text-transform:uppercase;color:#8e8a82;
-    }
-    .ab-list{list-style:none;margin:22px 0 0;padding:0}
-    .ab-row{
-      display:flex;align-items:baseline;justify-content:space-between;gap:14px;
-      padding:11px 0;border-bottom:1px solid rgba(255,255,255,.08);
-    }
-    .ab-row:last-child{border-bottom:none;padding-bottom:0}
-    .ab-k{
-      font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
-      letter-spacing:.18em;text-transform:uppercase;color:#8e8a82;
-    }
-    .ab-v{
-      font-family:"Songti SC","Noto Serif SC",Georgia,serif;
-      font-size:clamp(1rem,2vw,1.15rem);color:#f3f1ec;
-      font-variant-numeric:tabular-nums;
-    }
-    .bd-card{display:flex;flex-direction:column;gap:6px}
-    .bd-name{
-      margin:0;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
-      letter-spacing:.24em;text-transform:uppercase;color:#8e8a82;
-    }
-    .bd-num{display:flex;align-items:baseline;gap:8px;margin:6px 0 0}
-    .bd-days{
-      font-family:"Songti SC","Noto Serif SC",Georgia,serif;
-      font-size:clamp(2.8rem,8vw,4.4rem);line-height:1;color:#f3f1ec;
-      font-variant-numeric:tabular-nums;
-    }
-    .bd-unit{
-      font-family:ui-monospace,Menlo,monospace;font-size:11px;
-      letter-spacing:.2em;color:#8e8a82;
-    }
-    .bd-meta{margin:10px 0 0;font-size:12.5px;line-height:1.7;color:#8e8a82}
-    .bd-card.is-today .bd-days,.bd-card.is-today .bd-meta{color:#e8dfd2}
-    @media (max-width:620px){ .ab-grid,.bd-grid{grid-template-columns:1fr} }
-  </style>
-
-  <script>
-  (function () {
-    /* 年龄：按生日自动算，每年生日自动加一 */
-    document.querySelectorAll("[data-birth]").forEach(function (el) {
-      var b = new Date(el.getAttribute("data-birth") + "T00:00:00");
-      if (isNaN(b.getTime())) return;
-      var now = new Date();
-      var age = now.getFullYear() - b.getFullYear();
-      var m = now.getMonth() - b.getMonth();
-      if (m < 0 || (m === 0 && now.getDate() < b.getDate())) age--;
-      el.textContent = age + " 岁";
-    });
-
-    /* 生日倒计时：算到下一个生日 */
-    var today = new Date();
-    today.setHours(0, 0, 0, 0);
-    document.querySelectorAll(".bd-card[data-bday]").forEach(function (card) {
-      var p = card.getAttribute("data-bday").split("-");
-      var y = +p[0], m = +p[1], d = +p[2];
-      var next = new Date(today.getFullYear(), m - 1, d);
-      if (next < today) next = new Date(today.getFullYear() + 1, m - 1, d);
-      var days = Math.round((next - today) / 86400000);
-      var turning = next.getFullYear() - y;
-      var daysEl = card.querySelector(".bd-days");
-      var metaEl = card.querySelector(".bd-meta");
-      if (days === 0) {
-        card.classList.add("is-today");
-        if (daysEl) daysEl.textContent = "今";
-        if (metaEl) metaEl.textContent = "生日快乐 · 满 " + turning + " 岁";
-        return;
-      }
-      if (daysEl) daysEl.textContent = days;
-      if (metaEl) {
-        metaEl.textContent = next.getFullYear() + "." +
-          String(m).padStart(2, "0") + "." + String(d).padStart(2, "0") +
-          " · 满 " + turning + " 岁";
-      }
-    });
-  })();
-  </script>
-
-  <!-- ================= STORY / CATEGORIES ================= -->
-  <section class="section" id="story">
-    <header class="section-head reveal">
-      <span class="label">01 — 故事 · Story</span>
-      <h2>四件我们一直在做的事</h2>
-    </header>
-
-    <div class="cards">
-
-      <a class="card reveal" href="#gallery" data-filter="daily">
-        <div class="card-media"><img src="/images/06.jpg" alt="抬头看天" loading="lazy" decoding="async"></div>
-        <div class="card-body">
-          <span class="card-index">01</span>
-          <h3>我们的日常</h3>
-          <p>生活碎片与日常照片</p>
-          <span class="card-go" aria-hidden="true">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17L17 7M9 7h8v8"/></svg>
+      <div class="hero-foot reveal">
+        <a class="start-link" href="#timeline">
+          <span class="start-ring" aria-hidden="true">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 4v16M6 14l6 6 6-6"/></svg>
           </span>
-        </div>
-      </a>
+          <span>从最开始看起</span>
+        </a>
 
-      <a class="card reveal" href="#travel">
-        <div class="card-media"><img src="/images/03.jpg" alt="旅行合影" loading="lazy" decoding="async"></div>
-        <div class="card-body">
-          <span class="card-index">02</span>
-          <h3>一起去过的地方</h3>
-          <p>旅行、散步与风景</p>
-          <span class="card-go" aria-hidden="true">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17L17 7M9 7h8v8"/></svg>
-          </span>
-        </div>
-      </a>
-
-      <a class="card reveal" href="#timeline">
-        <div class="card-media"><img src="/images/01.jpg" alt="车窗边的自拍" loading="lazy" decoding="async"></div>
-        <div class="card-body">
-          <span class="card-index">03</span>
-          <h3>照片时间线</h3>
-          <p>按照日期收藏回忆</p>
-          <span class="card-go" aria-hidden="true">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17L17 7M9 7h8v8"/></svg>
-          </span>
-        </div>
-      </a>
-
-      <a class="card reveal" href="#notes">
-        <div class="card-media"><img src="/images/04.jpg" alt="街边合影" loading="lazy" decoding="async"></div>
-        <div class="card-body">
-          <span class="card-index">04</span>
-          <h3>写给彼此的话</h3>
-          <p>留言、纪念日和小故事</p>
-          <span class="card-go" aria-hidden="true">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17L17 7M9 7h8v8"/></svg>
-          </span>
-        </div>
-      </a>
-
+        <p class="hero-stats" aria-label="时间线概况">
+          <span><b data-stat="photos">—</b> 张照片</span>
+          <span><b data-stat="places">—</b> 座城市</span>
+          <span><b data-stat="days">—</b> 天</span>
+        </p>
+      </div>
     </div>
+
+    <a class="hero-side" href="#now" aria-label="跳到最近">SCROLL · 往下</a>
   </section>
 
-  <!-- ================= GALLERY ================= -->
-  <section class="section" id="gallery">
-    <header class="section-head reveal">
-      <span class="label">02 — 相册 · Gallery</span>
-      <h2>照片</h2>
-      <p class="section-note">点任意一张放大，方向键切换，Esc 关闭。</p>
-    </header>
+  <!-- ================= LEAD ================= -->
+  <section class="lead" id="timeline">
+    <div class="lead-inner">
+      <p class="label reveal">THE TIMELINE · 2025 — NOW</p>
+      <h2 class="reveal">一条线，串起我们<br>所有的照片、故事、<br class="br-m">留言和旅行。</h2>
+      <p class="lead-note reveal">
+        从第一次说话开始，按发生的顺序往下。照片、地点和那些写给彼此的话，都放回它们发生的日子里。
+      </p>
 
-    <div class="filters reveal" id="filters" role="group" aria-label="照片分类"></div>
-    <div class="gallery" id="gallery-grid" aria-live="polite"></div>
-    <p class="empty-note" id="empty-note" hidden>
-      照片还在整理中。整理好后告诉我，我批量压缩并接到这里。
-    </p>
-  </section>
+      <ul class="legend reveal" aria-label="时间线图例">
+        <li><i class="lg lg-story" aria-hidden="true"></i>故事</li>
+        <li><i class="lg lg-photo" aria-hidden="true"></i>照片</li>
+        <li><i class="lg lg-trip" aria-hidden="true"></i>旅行</li>
+        <li><i class="lg lg-message" aria-hidden="true"></i>留言</li>
+        <li><i class="lg lg-plan" aria-hidden="true"></i>计划</li>
+      </ul>
 
-  <!-- ================= 旅行地图 ================= -->
-  <section class="section travel" id="travel">
-    <header class="section-head reveal">
-      <span class="label">03 — 旅行 · Travel</span>
-      <h2>一起走过的地方</h2>
-      <p class="section-note">点城市看照片和故事。虚线是还没去的地方。</p>
-    </header>
-
-    <div class="travel-wrap">
-      <div class="map-host" id="travel-map" aria-live="polite"></div>
+      <div class="search reveal" id="search" role="search">
+        <label class="search-label" for="tl-search">找一天 · FIND A DAY</label>
+        <div class="search-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4.2-4.2"/></svg>
+          <input
+            id="tl-search"
+            type="search"
+            placeholder="输入 2026.08、福州，或一句话"
+            autocomplete="off"
+            spellcheck="false"
+            role="combobox"
+            aria-expanded="false"
+            aria-controls="search-results"
+            aria-autocomplete="list"
+          >
+          <kbd class="search-key" aria-hidden="true">/</kbd>
+        </div>
+        <div class="search-results" id="search-results" role="listbox" aria-label="搜索结果" hidden></div>
+      </div>
     </div>
-  </section>
-
-  <!-- ================= 城市图层 ================= -->
-  <div class="city-layer" id="city-layer" role="dialog" aria-modal="true" aria-labelledby="cl-title" hidden>
-    <div class="cl-panel">
-      <button class="cl-close" id="cl-close" type="button" aria-label="关闭">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>
-      </button>
-      <div class="cl-inner" id="cl-inner"></div>
-    </div>
-  </div>
-
-  <!-- ================= 未来计划 ================= -->
-  <section class="section future" id="future">
-    <header class="section-head reveal">
-      <span class="label">04 — 未来 · Future</span>
-      <h2>下一站，我们一起去</h2>
-    </header>
-    <div class="plans-grid" id="plans-grid"></div>
   </section>
 
   <!-- ================= TIMELINE ================= -->
-  <section class="section" id="timeline">
-    <header class="section-head reveal">
-      <span class="label">05 — 我们 · Story</span>
-      <h2>我们怎么走到这里</h2>
-    </header>
-
-    <ol class="timeline">
-      <li class="reveal">
-        <p class="tl-date">开始</p>
-        <h3>军训</h3>
-        <p>第一次认识是在军训的时候。晒得很黑，谁也没想到后来会走到一起。</p>
-      </li>
-      <li class="reveal">
-        <p class="tl-date">那天</p>
-        <h3>一场电影</h3>
-        <p>一起去看电影，散场的时候牵了手，就这么算在一起了。</p>
-      </li>
-      <li class="reveal">
-        <p class="tl-date">后来</p>
-        <h3>福州，长沙</h3>
-        <p>一起去了福州和长沙。走的地方不算多，但每一处都记得。</p>
-      </li>
-      <li class="reveal">
-        <p class="tl-date">现在</p>
-        <h3>继续往下走</h3>
-        <p>还有很多地方没去，慢慢走。</p>
-      </li>
-    </ol>
+  <section class="stream-wrap" aria-label="我们的时间线">
+    <div class="stream" id="stream">
+      <div class="stream-line" aria-hidden="true"><span id="stream-fill"></span></div>
+    </div>
+    <noscript>
+      <p class="noscript">时间线需要 JavaScript 才能显示。请打开浏览器的 JavaScript 后再刷新。</p>
+    </noscript>
   </section>
 
-  <!-- ================= NOTES ================= -->
-  <section class="section notes" id="notes">
-    <header class="section-head reveal">
-      <span class="label">04 — 留言 · Notes</span>
-      <h2>写给彼此</h2>
-    </header>
-    <blockquote class="note reveal">
-      <p>坚持你的一切选择。</p>
-      <cite>—— wth</cite>
-    </blockquote>
-  </section>
-
-  <section class="end">
-    <p class="end-line reveal">谢谢你来这里看我们。</p>
-    <p class="end-sign reveal">wth <em>&amp;</em> dwt</p>
+  <!-- ================= OUTRO ================= -->
+  <section class="outro" id="now">
+    <p class="label reveal">TO BE CONTINUED</p>
+    <h2 class="reveal">这条线，<br>还没有尽头。</h2>
+    <p class="outro-text reveal">
+      在一起的第 <span id="outro-days">—</span> 天。<br>
+      照片会变多，地方会变远，新的日子会一直接在后面。
+    </p>
+    <p class="outro-sign reveal">wth <em>&amp;</em> dwt</p>
+    <a class="outro-back reveal" href="#top">回到开头 ↑</a>
   </section>
 
 </main>
 
 <footer class="footer">
   <p>© <span id="year">2026</span> wth &amp; dwt · 保留所有照片权利</p>
+  <p class="footer-note">一条时间线 · 一直在更新</p>
 </footer>
 
 <!-- ================= LIGHTBOX ================= -->
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="照片查看" hidden>
-  <button class="lb-close" id="lb-close" aria-label="关闭">
+  <button class="lb-close" id="lb-close" type="button" aria-label="关闭">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>
   </button>
-  <button class="lb-nav lb-prev" id="lb-prev" aria-label="上一张">
+  <button class="lb-nav lb-prev" id="lb-prev" type="button" aria-label="上一张">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
   </button>
   <figure class="lb-figure">
     <img id="lb-img" alt="">
     <figcaption id="lb-cap"></figcaption>
   </figure>
-  <button class="lb-nav lb-next" id="lb-next" aria-label="下一张">
+  <button class="lb-nav lb-next" id="lb-next" type="button" aria-label="下一张">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
   </button>
   <p class="lb-count" id="lb-count"></p>
 </div>
 
+<!-- ================= CITY LAYER (地图点开) ================= -->
+<div class="city-layer" id="city-layer" role="dialog" aria-modal="true" aria-labelledby="cl-title" hidden>
+  <div class="cl-panel">
+    <button class="cl-close" id="cl-close" type="button" aria-label="关闭">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>
+    </button>
+    <div class="cl-inner" id="cl-inner"></div>
+  </div>
+</div>
+
+<!-- ================= ABOUT ================= -->
+<dialog class="about" id="about-dialog" aria-labelledby="about-title">
+  <div class="about-inner">
+    <form method="dialog" class="about-form">
+      <button class="about-close" type="submit" aria-label="关闭">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>
+      </button>
+    </form>
+    <p class="label">ABOUT US</p>
+    <h2 id="about-title">我们</h2>
+    <p class="about-lead">两个人，一条时间线。下面是这条线的两个作者。</p>
+    <div class="about-grid" id="about-grid"></div>
+    <p class="about-foot">在一起的第 <span id="about-days">—</span> 天 · 自 <time id="about-since">2026.05.21</time></p>
+  </div>
+</dialog>
+
 <script src="/assets/photos.js" defer></script>
 <script src="/assets/map.js" defer></script>
-<script src="/assets/content.js" defer></script>
 <script src="/assets/main.js" defer></script>
 </body>
 </html>

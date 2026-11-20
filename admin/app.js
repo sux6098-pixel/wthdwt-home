@@ -35,7 +35,12 @@
     btnSubmit: document.getElementById("btn-submit"),
     count: document.getElementById("count"),
     uploadStatus: document.getElementById("upload-status"),
-    result: document.getElementById("result")
+    result: document.getElementById("result"),
+    attachBox: document.getElementById("attach-box"),
+    uploadTarget: document.getElementById("upload-target"),
+    newMoment: document.getElementById("new-moment"),
+    newDate: document.getElementById("new-date"),
+    newTitle: document.getElementById("new-title")
   };
 
   /* ---------------- 基础工具 ---------------- */
@@ -43,6 +48,12 @@
     if (!node) return;
     node.textContent = text || "";
     node.className = "status" + (kind ? " " + kind : "");
+  }
+
+  function escapeHtml(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
   }
 
   function api(path, opts) {
@@ -150,6 +161,7 @@
     if (name) el.whoName.textContent = "已连接 · " + name;
     syncShell(true);
     loadCityList();
+    loadMomentOptions();
   }
 
   function connect() {
@@ -289,7 +301,9 @@
 
     el.count.textContent = String(queue.length);
     el.submitBar.hidden = queue.length === 0;
+    if (el.attachBox) el.attachBox.hidden = queue.length === 0;
     el.btnSubmit.disabled = busy || queue.length === 0;
+    syncAttachUI();
   }
 
   /* ---------------- 提交 ---------------- */
@@ -344,6 +358,142 @@
       });
   }
 
+  /* ---------------- 接到时间线 ---------------- */
+  function todayISO() {
+    var d = new Date();
+    function p(n) { return String(n).padStart(2, "0"); }
+    return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate());
+  }
+
+  function dateLabel(m) {
+    if (m.label) return m.label;
+    return m.date ? String(m.date).replace(/-/g, ".") : "某一天";
+  }
+
+  function syncAttachUI() {
+    if (!el.uploadTarget) return;
+    var isNew = el.uploadTarget.value === "__new__";
+    if (el.newMoment) el.newMoment.hidden = !isNew;
+    if (isNew && el.newDate && !el.newDate.value) el.newDate.value = todayISO();
+  }
+
+  function loadMomentOptions() {
+    if (!token || !el.uploadTarget) return Promise.resolve();
+    return api("/repos/" + OWNER + "/" + REPO + "/contents/assets/content.json?ref=" + BRANCH)
+      .then(function (meta) {
+        var d = JSON.parse(b64ToUtf8(meta.content));
+        var items = (d.moments || []).map(function (m, i) {
+          return { m: m, i: i };
+        }).sort(function (a, b) {
+          return String(a.m.date || "").localeCompare(String(b.m.date || ""));
+        });
+
+        var current = el.uploadTarget.value;
+        el.uploadTarget.innerHTML = "";
+        var none = document.createElement("option");
+        none.value = "";
+        none.textContent = "只放进相册，不接时间线";
+        el.uploadTarget.appendChild(none);
+
+        var addNew = document.createElement("option");
+        addNew.value = "__new__";
+        addNew.textContent = "＋ 新建一条时间线";
+        el.uploadTarget.appendChild(addNew);
+
+        items.forEach(function (item) {
+          var opt = document.createElement("option");
+          opt.value = item.m.id ? "id:" + item.m.id : "idx:" + item.i;
+          opt.textContent = dateLabel(item.m) + " · " + (item.m.title || "未命名");
+          el.uploadTarget.appendChild(opt);
+        });
+
+        var exists = Array.prototype.some.call(el.uploadTarget.options, function (o) {
+          return o.value === current;
+        });
+        el.uploadTarget.value = exists ? current : "";
+        syncAttachUI();
+      })
+      .catch(function () {
+        /* 读不到就保留“只放相册 / 新建一条”两个选项 */
+      });
+  }
+
+  function attachUploaded(uploaded) {
+    var target = el.uploadTarget ? el.uploadTarget.value : "";
+    if (!target) return Promise.resolve({ attached: false });
+    var names = uploaded.map(function (u) { return "/images/" + u.name; });
+    var isNew = target === "__new__";
+    var date = el.newDate ? el.newDate.value : "";
+    var title = el.newTitle ? el.newTitle.value.trim() : "";
+    if (isNew && !date) return Promise.reject(new Error("先选一下新的一条的日期"));
+
+    return api("/repos/" + OWNER + "/" + REPO + "/contents/assets/content.json?ref=" + BRANCH)
+      .then(function (meta) {
+        var sha = meta.sha;
+        var d = JSON.parse(b64ToUtf8(meta.content));
+        d.moments = d.moments || [];
+
+        var moment = null;
+        if (isNew) {
+          moment = {
+            id: "m-" + Date.now(),
+            date: date,
+            label: date.replace(/-/g, "."),
+            sub: "新加的一条",
+            title: title || "新的一条",
+            text: "",
+            kind: "photo",
+            photos: names
+          };
+          d.moments.push(moment);
+        } else {
+          var id = target.indexOf("id:") === 0 ? target.slice(3) : "";
+          var idx = target.indexOf("idx:") === 0 ? parseInt(target.slice(4), 10) : -1;
+          d.moments.some(function (m, i) {
+            if (id && m.id === id) { moment = m; return true; }
+            if (!id && i === idx) { moment = m; return true; }
+            return false;
+          });
+          if (!moment) throw new Error("这条时间线找不到了，刷新后再试");
+          moment.photos = (moment.photos || []).concat(names);
+        }
+
+        var json = JSON.stringify(d, null, 2) + "\n";
+        return api("/repos/" + OWNER + "/" + REPO + "/contents/assets/content.json", {
+          method: "PUT",
+          body: JSON.stringify({
+            message: isNew ? "content: 新增时间线 + 照片" : "content: 照片接到时间线",
+            content: utf8ToB64(json),
+            sha: sha,
+            branch: BRANCH
+          })
+        }).then(function (res) {
+          /* 把改动同步进文字编辑器，避免下一次保存覆盖掉刚接的照片 */
+          if (contentState.data && contentState.sha === sha) {
+            var cd = contentState.data;
+            cd.moments = cd.moments || [];
+            if (isNew) {
+              cd.moments.push(moment);
+            } else {
+              var cm = id
+                ? cd.moments.filter(function (m) { return m.id === id; })[0]
+                : cd.moments[idx];
+              if (cm) cm.photos = (cm.photos || []).concat(names);
+            }
+            contentState.sha = res.content.sha;
+          } else if (!contentState.data) {
+            contentState.data = d;
+            contentState.sha = res.content.sha;
+          }
+          return {
+            attached: true,
+            isNew: isNew,
+            label: isNew ? (title || date.replace(/-/g, ".")) : dateLabel(moment)
+          };
+        });
+      });
+  }
+
   function submit() {
     if (busy || !queue.length) return;
     busy = true;
@@ -353,6 +503,16 @@
     var prefix = stamp();
     var uploaded = [];
     var failed = [];
+    var photosWritten = false;
+    var attachedInfo = null;
+
+    var targetValue = el.uploadTarget ? el.uploadTarget.value : "";
+    if (targetValue === "__new__" && el.newDate && !el.newDate.value) {
+      busy = false;
+      el.btnSubmit.disabled = false;
+      setStatus(el.uploadStatus, "先选一下新的一条的日期", "err");
+      return;
+    }
 
     var chain = Promise.resolve();
 
@@ -384,27 +544,46 @@
       setStatus(el.uploadStatus, "写入照片清单…");
       return appendToPhotos(uploaded);
     }).then(function () {
+      photosWritten = true;
+      setStatus(el.uploadStatus, "接到时间线…");
+      return attachUploaded(uploaded);
+    }).then(function (info) {
+      attachedInfo = info;
       batch.forEach(function (item) { URL.revokeObjectURL(item.preview); });
       queue = queue.filter(function (q) { return batch.indexOf(q) === -1; });
       renderQueue();
+      loadMomentOptions();
+
+      var attachLine = attachedInfo && attachedInfo.attached
+        ? "已接到时间线：<b>" + escapeHtml(attachedInfo.label) + "</b><br>"
+        : "已放进相册，没有接时间线。<br>";
 
       setStatus(el.uploadStatus, "完成，约 1 分钟后上线", "ok");
       el.result.hidden = false;
       var extra = failed.length ? "，" + failed.length + " 张失败" : "";
       el.result.innerHTML =
         "<b>已上传 " + uploaded.length + " 张" + extra + "</b><br>" +
+        attachLine +
         "Cloudflare 正在构建，稍等刷新。<br>" +
         '<a href="https://wthdwt-home.pages.dev/" target="_blank" rel="noopener">打开网站 →</a>';
     }).catch(function (err) {
+      if (photosWritten) {
+        batch.forEach(function (item) { URL.revokeObjectURL(item.preview); });
+        queue = queue.filter(function (q) { return batch.indexOf(q) === -1; });
+        renderQueue();
+      }
       setStatus(el.uploadStatus, err.message, "err");
       el.result.hidden = false;
-      el.result.innerHTML =
-        "<b>图片传上去了，但清单没写成功</b><br>" +
-        "原因是：" + err.message + "<br>" +
-        "可以去 GitHub 手动在 <code>assets/photos.js</code> 里加这几行：" +
-        uploaded.map(function (u) {
-          return "<br><code>  { src: \"/images/" + u.name + "\", alt: \"\", cat: \"" + u.cat + "\" }</code>";
-        }).join("");
+      el.result.innerHTML = photosWritten
+        ? "<b>照片传上去了，但没接到时间线</b><br>" +
+          "原因是：" + escapeHtml(err.message) + "<br>" +
+          "照片文件还在，可以到「文字」里手动把路径补进对应的一条。"
+        : "<b>图片传上去了，但清单没写成功</b><br>" +
+          "原因是：" + escapeHtml(err.message) + "<br>" +
+          "可以去 GitHub 手动在 <code>assets/photos.js</code> 里加这几行：" +
+          uploaded.map(function (u) {
+            return "<br><code>  { src: \"/images/" + u.name + "\", alt: \"\", cat: \"" + u.cat + "\" }</code>";
+          }).join("");
     }).then(function () {
       busy = false;
       el.btnSubmit.disabled = queue.length === 0;
@@ -436,6 +615,10 @@
 
   el.fileInput.addEventListener("change", function () { addFiles(el.fileInput.files); });
   el.btnSubmit.addEventListener("click", submit);
+  if (el.uploadTarget) {
+    el.uploadTarget.addEventListener("change", syncAttachUI);
+    syncAttachUI();
+  }
 
   /* ================= 文字编辑（assets/content.json） ================= */
   function $(id) { return document.getElementById(id); }
@@ -709,50 +892,93 @@
 
     /* 时间线 */
     var s2 = section("时间线");
-    (d.timeline || []).forEach(function (item, i) {
+    var hint = document.createElement("p");
+    hint.className = "sec-note";
+    hint.textContent = "每条是一段日子。照片路径要和 assets/photos.js 里的 src 一致，一行一张。";
+    s2.appendChild(hint);
+
+    d.moments = d.moments || [];
+    d.moments.forEach(function (item, i) {
       var block = document.createElement("div");
       block.className = "tl-block";
       var head = document.createElement("div");
       head.className = "tl-head";
-      head.textContent = "第 " + (i + 1) + " 条";
+      head.textContent = "第 " + (i + 1) + " 条" + (item.title ? " · " + item.title : "");
       var del = document.createElement("button");
       del.type = "button";
       del.className = "tl-del";
       del.textContent = "删除";
       del.addEventListener("click", function () {
-        d.timeline.splice(i, 1);
+        d.moments.splice(i, 1);
         renderTextForm(d);
       });
       head.appendChild(del);
       block.appendChild(head);
-      block.appendChild(field("小字（日期/阶段）", item.when, function (v) { item.when = v; }));
+
+      var labelField = null;
+      var dateField = field("日期（YYYY-MM-DD，或 YYYY-MM）", item.date, function (v) {
+        item.date = v;
+        if (!item.label || /^\d{4}([.\-/]\d{1,2}){1,2}$/.test(item.label)) {
+          item.label = v.replace(/-/g, ".");
+          var labelInput = labelField && labelField.querySelector("input");
+          if (labelInput) labelInput.value = item.label;
+        }
+      });
+      block.appendChild(dateField);
+      labelField = field("日期上显示的字（可留空）", item.label, function (v) { item.label = v; });
+      block.appendChild(labelField);
+      block.appendChild(field("日期下的小字（可留空）", item.sub, function (v) { item.sub = v; }));
       block.appendChild(field("标题", item.title, function (v) { item.title = v; }));
-      block.appendChild(field("内容", item.text, function (v) { item.text = v; }, true));
+      block.appendChild(field("正文", item.text, function (v) { item.text = v; }, true));
+      block.appendChild(selectField("类型", item.kind || "story", [
+        ["story", "故事"],
+        ["photo", "照片"],
+        ["trip", "旅行"],
+        ["message", "留言"],
+        ["milestone", "纪念"],
+        ["map", "路线"]
+      ], function (v) { item.kind = v; }));
+      block.appendChild(field("地点（可留空）", item.place, function (v) { item.place = v; }));
+      block.appendChild(field("照片路径（每行一张，可留空）",
+        (item.photos || []).map(function (p) { return typeof p === "string" ? p : p.src; }).join("\n"),
+        function (v) {
+          var old = item.photos || [];
+          item.photos = v.split(/\r?\n/).map(function (s) { return s.trim(); }).filter(Boolean).map(function (src) {
+            for (var j = 0; j < old.length; j++) {
+              if (typeof old[j] === "object" && old[j].src === src) return old[j];
+            }
+            return src;
+          });
+        }, true));
+      block.appendChild(selectField("地图", item.map ? "1" : "", [
+        ["", "不显示"],
+        ["1", "显示地图"]
+      ], function (v) { item.map = v === "1"; }));
+      block.appendChild(field("留言（可留空）", item.message && item.message.text, function (v) {
+        item.message = item.message || {};
+        item.message.text = v;
+      }, true));
+      block.appendChild(field("留言署名", item.message && item.message.by, function (v) {
+        item.message = item.message || {};
+        item.message.by = v;
+      }));
       s2.appendChild(block);
     });
+
     var add = document.createElement("button");
     add.type = "button";
     add.className = "add";
     add.textContent = "+ 添加一条";
     add.addEventListener("click", function () {
-      d.timeline = d.timeline || [];
-      d.timeline.push({ when: "", title: "", text: "" });
+      d.moments = d.moments || [];
+      d.moments.push({
+        date: "", label: "", sub: "", title: "", text: "",
+        kind: "story", place: "", photos: [], message: null
+      });
       renderTextForm(d);
     });
     s2.appendChild(add);
     form.appendChild(s2);
-
-    /* 留言 */
-    var s3 = section("写给彼此");
-    s3.appendChild(field("那句话", d.note && d.note.text, function (v) { d.note.text = v; }, true));
-    s3.appendChild(field("署名", d.note && d.note.by, function (v) { d.note.by = v; }));
-    form.appendChild(s3);
-
-    /* 结尾 */
-    var s4 = section("结尾");
-    s4.appendChild(field("最后一句", d.end && d.end.line, function (v) { d.end.line = v; }));
-    s4.appendChild(field("署名", d.end && d.end.sign, function (v) { d.end.sign = v; }));
-    form.appendChild(s4);
 
     /* 关于我们 */
     var s5 = section("关于我们");
@@ -885,6 +1111,7 @@
     }).then(function (res) {
       contentState.sha = res.content.sha;
       setStatus($("text-status"), "已保存，约 1 分钟后生效", "ok");
+      loadMomentOptions();
     }).catch(function (err) {
       setStatus($("text-status"), "保存失败：" + err.message, "err");
     }).then(function () { btn.disabled = false; });

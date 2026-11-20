@@ -172,16 +172,20 @@ button { font-family: inherit; font-size: 15px; cursor: pointer; border-radius: 
 }
 .item input[type="text"]::placeholder { color: #5f5b54; }
 
-.item .row { display: flex; align-items: center; gap: 8px; }
-.seg { display: flex; gap: 6px; }
+.item .row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.seg { display: flex; gap: 6px; flex: 0 0 auto; }
 .seg button {
-  padding: 5px 12px;
+  padding: 5px 10px;
   font-size: 12.5px;
+  white-space: nowrap;
   background: transparent;
   border: 1px solid var(--line);
   color: var(--muted);
   border-radius: 999px;
 }
+.item .row .city-sel { flex: 1 1 110px; min-width: 0; max-width: none; }
+.item .row .meta { margin-left: 0; }
+.item .row .del { margin-left: auto; }
 .seg button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #0b0b0b; font-weight: 600; }
 .meta { font-family: var(--mono); font-size: 10.5px; color: #6d6961; margin-left: auto; }
 .del {
@@ -192,6 +196,52 @@ button { font-family: inherit; font-size: 15px; cursor: pointer; border-radius: 
   border: 1px solid var(--line);
   color: var(--muted);
   border-radius: 8px;
+}
+
+/* attach to timeline */
+.attach-box {
+  margin-top: 16px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--card);
+}
+.attach-box > label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.attach-box select {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #0b0b0b;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 13.5px;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.new-moment { display: grid; gap: 8px; margin-top: 9px; }
+.new-moment[hidden] { display: none; }
+.new-moment input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #0b0b0b;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 13.5px;
+  color-scheme: dark;
+}
+.attach-tip {
+  margin: 9px 0 0;
+  font-size: 11.5px;
+  line-height: 1.65;
+  color: var(--muted);
 }
 
 /* submit */
@@ -242,6 +292,12 @@ button { font-family: inherit; font-size: 15px; cursor: pointer; border-radius: 
   text-transform: uppercase;
   color: var(--muted);
   margin: 0 0 10px;
+}
+.sec-note {
+  margin: -2px 0 12px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--muted);
 }
 .field { margin-bottom: 12px; }
 .field label {
